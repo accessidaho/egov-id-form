@@ -1,0 +1,78 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="id-form-styles.html">
+<link rel="import" href="./dependencies.html">
+
+<!--
+`id-review` Readonly form field for use building reviews.
+
+@demo demo/index.html
+-->
+
+<dom-module id="id-review">
+  <template>
+    <style include="id-form-styles">
+
+    </style>
+
+    <div class="field-label">[[label]]</div><div class="field-control">
+      [[bindValue]]
+    </div>
+  </template>
+
+  <script>
+    class IdReview extends Polymer.Element {
+      static get is() { return 'id-review'; }
+      static get properties() {
+        return {
+          /**
+           * The value for this input.
+          **/
+          bindValue: {
+            type: String,
+            observer: '_bindValueChanged'
+          },
+          /**
+           * The label for this input.
+          **/
+          label: String,
+          /**
+           * The name for this input.
+          **/
+          boolText: {
+            type: Array,
+            value: ['Not checked', 'Checked']
+          },
+          /**
+           * The masking for the input. <i>For more information, see the [Inputmask 3.x](https://github.com/RobinHerbots/Inputmask) documentation.</i>
+          **/
+          mask: String,
+        };
+      }
+
+      /**
+       * Updatings the bound value. Applies options.
+       * @return null
+       */
+      _bindValueChanged() {
+
+        // Replace boolean with boolText index.
+        if (typeof(this.bindValue) === "boolean") {
+          let index = (this.bindValue) ? 1 : 0;
+          this.bindValue = this.boolText[index];
+        }
+
+        // Set for null values.
+        if (this.bindValue === null) {
+          this.bindValue = this.boolText[0];
+        }
+
+        // Apply mask if present.
+        if (this.mask) {
+          this.bindValue = Inputmask.format(this.bindValue, {alias: this.mask});
+        }
+      }
+    }
+
+    window.customElements.define(IdReview.is, IdReview);
+  </script>
+</dom-module>

@@ -1,0 +1,212 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-ajax/iron-ajax.html">
+<link rel="import" href="../id-alert/id-alert.html">
+<link rel="import" href="./dependencies.html">
+
+<!--
+`id-form`
+Idaho Form element that can validate and submit any form elements that are bound to the data object.
+
+## Constraints
+Data is validated against constraints. The constraints object can specify one or more validation rules for a field.
+```js
+var constraints = {
+  email: {
+    presence: true,
+    email: true
+  },
+  password: {
+    presence: true
+  }
+}
+```
+The library includes a collection of built-in validators and errors messages. Error messages can be customized, and you can also define custom validators for validating single, or multiple fields. Constraints can also be specified for child objects.
+> <i>For more information, see the [Validate.js](https://validatejs.org/#constraints) documentation.</i>
+
+@demo demo/index.html
+-->
+
+<dom-module id="id-form">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+
+      * {
+        font-size: 14px;
+        line-height: 1.42857143;
+      }
+    </style>
+    <template is="dom-if" if="[[errors.length]]">
+      <id-alert color="danger">
+        <template is="dom-repeat" items="[[errors]]">
+          <div>[[item]]</div>
+        </template>
+      </id-alert>
+    </template>
+    <form id="helper" action$="[[action]]" method$="[[method]]" enctype$="[[enctype]]">
+      <slot id="content"></slot>
+    </form>
+
+    <iron-ajax id="xhr"></iron-ajax>
+  </template>
+
+  <script>
+    class IdForm extends Polymer.Element {
+      static get is() { return 'id-form'; }
+      static get properties() {
+        return {
+          /**
+           * The validation results. The results will appear here as an array.
+          **/
+          errors: {
+            type: Array,
+            notify: true,
+            value: []
+          },
+          /**
+           * Sets the method of XHR call.
+          **/
+          method: {
+            type: String,
+            value: 'POST'
+          },
+          /**
+           * The action attribute specifies where to send the form-data when a form is submitted.
+          **/
+          action: String,
+          /**
+           * The enctype attribute specifies how the form-data should be encoded when submitting it to the server.
+          **/
+          enctype: String,
+          /**
+           * Content type to use when sending data. If the contentType property is set and a Content-Type header is specified in the headers property, the headers property value will take precedence.
+          **/
+          contentType: {
+            type: String,
+            value: 'application/json'
+          },
+          /**
+           * Specifies what data to store in the response property, and to deliver as event.detail.response in response events.
+          **/
+          handleAs: {
+            type: String,
+            value: 'json'
+          },
+          /**
+           * The data to validate against the constraints.
+          **/
+          data: Object,
+          /**
+           * The constraints used to validate the data. <i>For more information, see the [validate.js](https://validatejs.org) documentation.</i>
+          **/
+          constraints: Object
+        };
+      }
+
+      ready() {
+        super.ready();
+        this.$.helper.addEventListener('submit', e => this.validate(e));
+        this._getFields();
+      }
+
+      /**
+       * This is called when the form is attached to the dom.
+       * It collects a list of children elements for
+       * validation reasons.
+       *
+       * @return {null}
+      **/
+      _getFields() {
+        let elements = this.$.content.assignedNodes();
+        this.fields = {};
+        for (var el, j = 0; el = elements[j], j < elements.length; j++) {
+          if (!el.disabled && el.name) {
+            this.fields[el.name] = el;
+          }
+        }
+      }
+
+      /**
+       * Resets the validation errors on each child element.
+       *
+       * @return {null}
+      **/
+      _resetFields() {
+        Object.keys(this.fields).forEach((key) => {
+          this.fields[key].validate(true);
+        });
+      }
+
+      /**
+       * Validate.js has issues validating empty strings on non required fields.
+       * This function resets empty strings to null.
+       *
+       * @return {null}
+      **/
+      _clearEmptyValues() {
+        Object.keys(this.data).forEach((key) => {
+          if (this.data[key] === '') {
+            this.data[key] = null;
+          }
+        });
+      }
+
+      /**
+       * Submits the form through iron-ajax. This function should be called after
+       * you validate the form through the validate method.
+       *
+       * @return {boolean}
+      **/
+      submit() {
+
+        let xhr = this.$.xhr;
+
+        xhr.contentType = this.contentType;
+        xhr.handleAs = this.handleAs;
+        xhr.url = this.action;
+
+        // Set body or params of request.
+        if (this.method === 'GET') xhr.params = this.data;
+        else xhr.body = this.data;
+
+        // Fire away.
+        this.$.xhr.generateRequest();
+
+        return true;
+      }
+
+      /**
+       * Sends the collected information through validate.js using constraints
+       * to validate against.
+       *
+       * @return {boolean}
+      **/
+      validate() {
+
+        this._resetFields();
+        this._clearEmptyValues();
+
+        let errors = validate(this.data, this.constraints);
+        let flatErrors = [];
+
+        if (errors) {
+          Object.keys(errors).forEach((key) => {
+            if (this.fields[key]) {
+              this.fields[key].validate(false);
+            }
+
+            errors[key].forEach((error) => flatErrors.push(error));
+          });
+        }
+
+        this.set('errors', flatErrors);
+
+        return (flatErrors.length) ? false : true;
+      }
+    }
+
+    window.customElements.define(IdForm.is, IdForm);
+  </script>
+</dom-module>

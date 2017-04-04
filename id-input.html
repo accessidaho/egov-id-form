@@ -1,0 +1,175 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="id-form-styles.html">
+
+<!--
+`id-input` is a single-line text field with Idaho styling.
+
+@demo demo/index.html
+-->
+
+<dom-module id="id-input">
+  <template>
+    <style include="id-form-styles">
+
+      @media (min-width: 768px) {
+        :host(.lg) input {
+          width: 80%;
+        }
+
+        :host(.md) input {
+          width: 50%;
+        }
+
+        :host(.sm) input {
+          width: 25%;
+        }
+
+        :host(.xs) input {
+          width: 15%;
+        }
+      }
+
+      input {
+        font-size: 100%;
+        display: block;
+        width: 100%;
+        padding: .5rem .75rem;
+        line-height: 1.25;
+        color: #464a4c;
+        background-color: #fff;
+        background-image: none;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        border: 1px solid rgba(0,0,0,.15);
+        border-radius: .25rem;
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+      }
+
+      input:focus {
+        color: #464a4c;
+        background-color: #fff;
+        border-color: #5cb3fd;
+        outline: 0;
+      }
+
+    </style>
+    <label class="field-label">[[label]]</label><div class="field-control">
+      <template is="dom-if" if="{{!required}}"><span class="optional">(Optional)</span></template><template is="dom-if" if="{{hint}}"><span class="hint">[[hint]]</span></template>
+      <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]">
+
+    </div>
+  </template>
+
+  <script>
+    class IdInput extends Polymer.Element {
+      static get is() { return 'id-input'; }
+      static get properties() {
+        return {
+          /**
+           * The value for this input.
+          **/
+          bindValue: {
+            type: String,
+            notify: true,
+            value: ''
+          },
+          /**
+           * The label for this input.
+          **/
+          label: String,
+          /**
+           * The name for this input.
+          **/
+          name: String,
+          /**
+           * The type of the input. The supported types are text, number, email, tel and password.
+          **/
+          type: String,
+          /**
+           * Determines whether to apply the invalid style.
+          **/
+          invalid: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          /**
+           * The requirement for this input.
+          **/
+          required: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+          /**
+           * Description text appearing above the input.
+          **/
+          hint: String,
+          /**
+           * The masking for the input. <i>For more information, see the [Inputmask 3.x](https://github.com/RobinHerbots/Inputmask) documentation.</i>
+          **/
+          mask: String,
+          /**
+           * Automatically unmask the variable on blur.
+          **/
+          autoUnmask: {
+            type: Boolean,
+            value: true
+          },
+          /**
+           * Allow the variable to be updated if the mask isn't satisfied.
+          **/
+          allowIncomplete: {
+            type: Boolean,
+            value: false
+          }
+        };
+      }
+
+      /**
+       * Sets the invalid boolean for styling.
+       * @param  {boolean} valid Is the input valid or not.
+       * @return null
+       */
+      validate(valid) {
+        this.set('invalid', !valid);
+      }
+
+      /**
+       * Set the bind value for masked inputs.
+       */
+      _setValue() {
+        this.set('bindValue', $(this.$.input).val());
+      }
+
+      ready() {
+        super.ready();
+
+        // Set masking.
+        if (this.mask) {
+          let options = {
+            placeholder: " ",
+            autoUnmask: this.autoUnmask,
+            oncomplete: this._setValue.bind(this),
+            clearIncomplete: true
+          }
+
+          // Update the variable if allow-incomplete is set.
+          if (this.allowIncomplete) {
+            options.onincomplete = this._setValue.bind(this);
+            options.clearIncomplete = false;
+          }
+
+          // Bind it.
+          $(this.$.input).inputmask(this.mask, options);
+        }
+      }
+    }
+
+    window.customElements.define(IdInput.is, IdInput);
+  </script>
+</dom-module>

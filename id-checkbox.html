@@ -1,0 +1,105 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="id-form-styles.html">
+
+<!--
+`id-checkbox` Checkbox form field with Idaho styling.
+
+@demo demo/index.html
+-->
+
+<dom-module id="id-checkbox">
+  <template>
+    <style include="id-form-styles">
+
+      label {
+        padding-left: 1.25rem;
+        margin-bottom: 0;
+        cursor: pointer;
+        display: inline-block;
+      }
+
+      input {
+        margin-left: -1.25rem;
+        margin-right: .5rem;
+        box-sizing: border-box;
+        padding: 0;
+        font-size: 1rem;
+      }
+
+    </style>
+    <template is="dom-if" if="{{!fullWidth}}"><div class="field-label">[[hint]]</div></template>
+    <div class="field-control"><label on-change="_select"><input type="checkbox" name$="[[name]]" checked="{{bindValue}}">[[label]]</label></div>
+  </template>
+
+  <script>
+    class IdCheckbox extends Polymer.Element {
+      static get is() { return 'id-checkbox'; }
+      static get properties() {
+        return {
+          /**
+           * The value for this input.
+          **/
+          bindValue: {
+            type: Boolean,
+            notify: true
+          },
+          /**
+           * The label for this input.
+          **/
+          label: String,
+          /**
+           * The name for this input.
+          **/
+          name: String,
+          /**
+           * Description text appearing above the input.
+          **/
+          hint: String,
+          /**
+           * Extends the input to full width.
+          **/
+          fullWidth: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * Determines whether to apply the invalid style.
+          **/
+          invalid: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          }
+        };
+      }
+
+      /**
+       * On change event for when a radio is selected
+       * @return null
+       */
+      _select() {
+        this.select(!this.bindValue);
+      }
+
+      /**
+       * Set the current selected value.
+       * @param  {string} value Value to set
+       * @return null
+       */
+      select(value) {
+        this.set('bindValue', value);
+      }
+
+      /**
+       * Sets the invalid boolean for styling.
+       * @param  {boolean} valid Is the input valid or not.
+       * @return null
+       */
+      validate(valid) {
+        this.set('invalid', !valid);
+      }
+    }
+
+    window.customElements.define(IdCheckbox.is, IdCheckbox);
+  </script>
+</dom-module>

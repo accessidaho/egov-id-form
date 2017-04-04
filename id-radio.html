@@ -1,0 +1,136 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="id-form-styles.html">
+
+<!--
+`id-radio` allows user to select at most one radio button from a set. Checking one radio button that belongs to a radio group unchecks any previously checked radio button within the same group.
+
+@demo demo/index.html
+-->
+
+<dom-module id="id-radio">
+  <template>
+    <style include="id-form-styles">
+
+      .radio {
+        margin-bottom: .5rem;
+      }
+
+      label {
+        padding-left: 1.25rem;
+        margin-bottom: 0;
+        cursor: pointer;
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      input {
+        margin-left: -1.25rem;
+        margin-right: .5rem;
+        box-sizing: border-box;
+        padding: 0;
+        font-size: 1rem;
+      }
+
+    </style>
+    <template is="dom-if" if="{{!fullWidth}}"><div class="field-label">[[label]]</div></template>
+
+    <div class="field-control" on-change="_select">
+      <template is="dom-repeat" items="{{choices}}">
+        <div class="radio">
+          <label><input type="radio" name$="[[name]]" value$="[[item]]" checked="{{_selected(item, bindValue)}}">[[item]]</label>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    class IdRadio extends Polymer.Element {
+      static get is() { return 'id-radio'; }
+      static get properties() {
+        return {
+          /**
+           * The value for this input.
+          **/
+          bindValue: {
+            type: String,
+            notify: true,
+            value: ''
+          },
+          /**
+           * The label for this input.
+          **/
+          label: String,
+          /**
+           * The name for this input.
+          **/
+          name: String,
+          /**
+           * Description text appearing above the input.
+          **/
+          hint: String,
+          /**
+           * Extends the input to full width.
+          **/
+          fullWidth: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * List of possible values for the radios.
+          **/
+          choices: Array,
+          /**
+           * Determines whether to apply the invalid style.
+          **/
+          invalid: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
+          },
+
+        };
+      }
+
+      /**
+       * Determines if the radio is selected.
+       * @param  {string} item      Value of item to check.
+       * @param  {string} bindValue Value of bindValue variable.
+       * @return boolean            Is selected.
+       */
+      _selected(item, bindValue) {
+        return (item === bindValue);
+      }
+
+      /**
+       * On change event for when a radio is selected
+       * @param  {object} e      Event detail
+       * @param  {detail} detail Detail for event
+       * @param  {object} sender Node that sent the event
+       * @return null
+       */
+      _select(e, detail, sender) {
+        this.select(e.target.value);
+      }
+
+      /**
+       * Set the current selected value.
+       * @param  {string} value Value to set
+       * @return null
+       */
+      select(value) {
+        this.set('bindValue', value);
+      }
+
+      /**
+       * Sets the invalid boolean for styling.
+       * @param  {boolean} valid Is the input valid or not.
+       * @return null
+       */
+      validate(valid) {
+        this.set('invalid', !valid);
+      }
+    }
+
+    window.customElements.define(IdRadio.is, IdRadio);
+  </script>
+</dom-module>
