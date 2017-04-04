@@ -32,6 +32,9 @@ Import form elements you wish to use:
 
 Add the element and set properties:
 
+The mask attribute maps to Jquery.inputmask. *For more information, see the [jquery.inputmask.js](http://robinherbots.github.io/Inputmask/) documentation.*
+
+
 ```html
 <id-form data="{{data}}" constraints="[[constraints]]" action="/path/to/controller" method="[GET, POST, PUT, DELETE]">
   <id-input label="Name" bind-value="{{data.name}}" name="name" hint="Enter your first and last name" required class="sm"></id-input>
@@ -46,7 +49,7 @@ Add the element and set properties:
 
 Then add data to the component's properties:
 
-The constraints used to validate the data. *For more information, see the [validate.js](https://validatejs.org) documentation.*
+The constraints are used to validate the data. *For more information, see the [validate.js](https://validatejs.org) documentation.*
 
 ```js
 static get properties() {
