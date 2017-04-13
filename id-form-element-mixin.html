@@ -1,0 +1,81 @@
+<script>
+  const IdFormElementMixin = superclass => class extends superclass {
+    static get properties() {
+      return {
+        /**
+         * The value for this input.
+        **/
+        bindValue: {
+          type: String,
+          notify: true,
+          value: ''
+        },
+        /**
+         * The label for this input.
+        **/
+        label: String,
+        /**
+         * The name for this input.
+        **/
+        name: String,
+        /**
+         * Determines whether to apply the invalid style.
+        **/
+        invalid: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        /**
+         * The requirement for this input.
+        **/
+        required: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        /**
+         * Description text appearing above the input.
+        **/
+        hint: String,
+        /**
+         * Repeat button toggle.
+        **/
+        repeatButton: {
+          type: Boolean,
+          value: false,
+          reflectToAttribute: true
+        },
+        repeatButtonText: {
+          type: String,
+          value: 'Add'
+        }
+      };
+    }
+
+    /**
+     * Sets the invalid boolean for styling.
+     * @param  {boolean} valid Is the input valid or not.
+     * @return null
+     */
+    validate(valid) {
+      this.set('invalid', !valid);
+    }
+
+    /**
+     * Connected callback setup the repeat button.
+     * @return null
+     */
+    connectedCallback() {
+      super.connectedCallback();
+
+      let button = document.createElement('id-button');
+      button.setAttribute('event-name', 'add-repeat');
+      button.setAttribute('outline', '');
+      button.className = 'repeat-action';
+      button.innerHTML = '<i class="fa fa-plus" aria-hidden="true"></i> ' + this.repeatButtonText;
+
+      Polymer.dom(this.$.fieldControl).appendChild(button);
+    }
+  };
+</script>

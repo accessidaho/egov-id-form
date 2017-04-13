@@ -14,7 +14,10 @@
 
     </style>
 
-    <div class="field-label">[[label]]</div><div class="field-control">
+    <template is="dom-if" if="[[label]]">
+      <label id="fieldLabel">[[label]]</label>
+    </template>
+    <div class="fieldControl">
       [[bindValue]]
     </div>
   </template>

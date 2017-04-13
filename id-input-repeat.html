@@ -1,0 +1,189 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../id-button/id-button.html">
+<link rel="import" href="./id-input-repeat-row.html">
+
+<!--
+`id-form`
+Idaho Form element that can validate and submit any form elements that are bound to the data object.
+
+## Constraints
+Data is validated against constraints. The constraints object can specify one or more validation rules for a field.
+```js
+var constraints = {
+  email: {
+    presence: true,
+    email: true
+  },
+  password: {
+    presence: true
+  }
+}
+```
+The library includes a collection of built-in validators and errors messages. Error messages can be customized, and you can also define custom validators for validating single, or multiple fields. Constraints can also be specified for child objects.
+> <i>For more information, see the [Validate.js](https://validatejs.org/#constraints) documentation.</i>
+
+@demo demo/index.html
+-->
+
+<dom-module id="id-input-repeat">
+  <template>
+    <style include="id-form-styles">
+      :host {
+        display: block;
+        margin-bottom: 1em;
+        position: relative;
+      }
+
+      #original {
+        display: none;
+      }
+
+      @media (min-width: 768px) {
+        #repeat-action {
+          position: absolute;
+          bottom: -5px;
+          left: var(--buttonLeft, '0%');
+        }
+
+      }
+
+      id-button {
+        display: inline-block;
+      }
+
+      .fa {
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .fa-trash:before {
+        content: "\f1f8";
+        font-size: 1rem;
+      }
+      .fa-plus:before {
+        content: "\f067";
+        font-size: 1rem;
+      }
+      .fa:before, .fa:after {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+    </style>
+
+    <div id="original">
+      <slot id="content"></slot>
+    </div>
+    <div id="repeats">
+      <template is="dom-repeat" items="[[bindValue]]">
+        <id-input-repeat-row
+          value="{{item}}"
+          repeats="[[repeatFields]]"
+          repeat-label="[[repeatLabel]]"
+          repeat-index="[[index]]"
+          repeat-button-text="[[repeatButtonText]]"
+          repeat-last="[[_isLastIndex(index, bindValue.length)]]"
+          on-add-repeat="addRow"
+          on-clear-empty="_clearEmpty">
+        </id-input-repeat-row>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    class IdInputRepeat extends Polymer.Element {
+      static get is() { return 'id-input-repeat'; }
+      static get properties() {
+        return {
+          /**
+           * The value for this input.
+          **/
+          bindValue: {
+            type: Array,
+            notify: true,
+          },
+          repeatLabel: {
+            type: Boolean,
+            value: false
+          },
+          clearEmptyOnBlur: {
+            type: Boolean,
+            value: false
+          },
+          repeatButtonText: {
+            type: String,
+            value: 'Add'
+          }
+        }
+      }
+
+      _isLastIndex(index, bindValue) {
+        return ((bindValue-1) === index);
+      }
+
+      addRow(e) {
+        if (e) {
+          e.stopPropagation();
+        }
+
+        if (this.bindValue[this.bindValue.length -1] === '') {
+          return;
+        }
+
+        if (this.repeatFields.length > 1) {
+          this.push('bindValue', {});
+        } else {
+          this.push('bindValue', '');
+        }
+      }
+
+      deleteRow() {
+        if (this.bindValue.length > 1) {
+          this.splice('bindValue', this.bindValue.length-1, 1);
+        }
+      }
+
+      _getRepeatableFields() {
+        this.repeatFields = this.$.content.assignedNodes().filter(field => !field.disabled && field.name);
+
+        if (this.repeatFields.length > 1 && !this.bindValue.length) {
+          this.bindValue[0] = {};
+        }
+      }
+
+      _clearEmpty(e) {
+        if (this.clearEmptyOnBlur && this.bindValue.length > 1) {
+          this.splice('bindValue', e.detail.index, 1);
+        }
+      }
+
+      _getButtonLeft() {
+        let lastClass = this.repeatFields[this.repeatFields.length-1].className;
+        let widths = {
+          lg: '80%',
+          md: '53%',
+          sm: '25%',
+          xs: '15%'
+        };
+
+        if (lastClass && widths[lastClass]) {
+          this.updateStyles({'--buttonLeft': widths[lastClass]});
+        }
+
+      }
+
+      ready() {
+        super.ready();
+        this.repeatFields = [];
+        this._getRepeatableFields();
+        this._getButtonLeft();
+      }
+    }
+
+    window.customElements.define(IdInputRepeat.is, IdInputRepeat);
+  </script>
+</dom-module>

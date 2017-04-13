@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="id-form-styles.html">
-
+<link rel="import" href="./id-form-element-mixin.html">
+<link rel="import" href="../id-button/id-button.html">
 <!--
 `id-radio` allows user to select at most one radio button from a set. Checking one radio button that belongs to a radio group unchecks any previously checked radio button within the same group.
 
@@ -32,9 +33,11 @@
       }
 
     </style>
-    <template is="dom-if" if="{{!fullWidth}}"><div class="field-label">[[label]]</div></template>
 
-    <div class="field-control" on-change="_select">
+    <template is="dom-if" if="[[label]]">
+      <label id="fieldLabel">[[label]]</label>
+    </template>
+    <div id="fieldControl" on-change="_select">
       <template is="dom-repeat" items="{{choices}}">
         <div class="radio">
           <label><input type="radio" name$="[[name]]" value$="[[item]]" checked="{{_selected(item, bindValue)}}">[[item]]</label>
@@ -44,50 +47,11 @@
   </template>
 
   <script>
-    class IdRadio extends Polymer.Element {
+    class IdRadio extends IdFormElementMixin(Polymer.Element) {
       static get is() { return 'id-radio'; }
       static get properties() {
         return {
-          /**
-           * The value for this input.
-          **/
-          bindValue: {
-            type: String,
-            notify: true,
-            value: ''
-          },
-          /**
-           * The label for this input.
-          **/
-          label: String,
-          /**
-           * The name for this input.
-          **/
-          name: String,
-          /**
-           * Description text appearing above the input.
-          **/
-          hint: String,
-          /**
-           * Extends the input to full width.
-          **/
-          fullWidth: {
-            type: Boolean,
-            value: false
-          },
-          /**
-           * List of possible values for the radios.
-          **/
-          choices: Array,
-          /**
-           * Determines whether to apply the invalid style.
-          **/
-          invalid: {
-            type: Boolean,
-            value: false,
-            reflectToAttribute: true
-          },
-
+          choices: Array
         };
       }
 
@@ -121,14 +85,6 @@
         this.set('bindValue', value);
       }
 
-      /**
-       * Sets the invalid boolean for styling.
-       * @param  {boolean} valid Is the input valid or not.
-       * @return null
-       */
-      validate(valid) {
-        this.set('invalid', !valid);
-      }
     }
 
     window.customElements.define(IdRadio.is, IdRadio);

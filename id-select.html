@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="id-form-styles.html">
-
+<link rel="import" href="./id-form-element-mixin.html">
+<link rel="import" href="../id-button/id-button.html">
 <!--
 `id-select` Select form field with Idaho styling.
 
@@ -57,8 +58,16 @@
         outline: 0;
       }
 
+      :host([repeat-button]) select {
+        float: left;
+        margin-right: 1rem;
+      }
+
     </style>
-    <label class="field-label">[[label]]</label><div class="field-control">
+    <template is="dom-if" if="[[label]]">
+      <label id="fieldLabel">[[label]]</label>
+    </template>
+    <div id="fieldControl">
       <select name$="[[name]]" on-change="_select">
         <template is="dom-repeat" items="{{choices}}">
             <option value$="[[item]]" selected="{{_selected(item, bindValue)}}">[[item]]</option>
@@ -68,44 +77,14 @@
   </template>
 
   <script>
-    class IdSelect extends Polymer.Element {
+    class IdSelect extends IdFormElementMixin(Polymer.Element) {
       static get is() { return 'id-select'; }
       static get properties() {
         return {
           /**
-           * The value for this input.
-          **/
-          bindValue: {
-            type: String,
-            notify: true,
-            value: ''
-          },
-          /**
-           * The label for this input.
-          **/
-          label: String,
-          /**
-           * The name for this input.
-          **/
-          name: String,
-          /**
-           * Description text appearing above the input.
-          **/
-          hint: String,
-          /**
-           * Extends the input to full width.
-          **/
-          fullWidth: {
-            type: Boolean,
-            value: false
-          },
-          /**
            * List of possible values for the radios.
           **/
-          choices: Array,
-          /**
-           * Determines whether to apply the invalid style.
-          **/
+          choices: Array
         };
       }
 
@@ -137,15 +116,6 @@
        */
       select(value) {
         this.set('bindValue', value);
-      }
-
-      /**
-       * Sets the invalid boolean for styling.
-       * @param  {boolean} valid Is the input valid or not.
-       * @return null
-       */
-      validate(valid) {
-        this.set('invalid', !valid);
       }
     }
 

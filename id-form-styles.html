@@ -63,7 +63,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         height: auto;
       }
 
-      .field-control {
+      #fieldControl {
         position: relative;
         min-height: 1px;
         padding-right: 15px;
@@ -72,7 +72,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         padding-top: 0px;
       }
 
-      .field-label {
+      #fieldLabel {
         position: relative;
         min-height: 1px;
         padding-right: 15px;
@@ -81,20 +81,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-bottom: 0;
         display: block;
         font-weight: 700;
-      }
-
-      @media (min-width: 768px) {
-        .field-label {
-          width: 17%;
-          display: inline-block;
-          float: left;
-          text-align: right;
-        }
-
-        .field-control {
-          width: 82%;
-          display: inline-block;
-        }
       }
 
       .optional {
@@ -108,6 +94,87 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: inline-block;
         margin-bottom: .5rem;
         padding-top: 7px;
+      }
+
+      .fa {
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        opacity: .8;
+      }
+
+      .fa-plus:before {
+        content: "\f067";
+        font-size: .9rem;
+      }
+
+      .fa:before, .fa:after {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+      }
+
+      .repeat-action {
+        display: none;
+      }
+
+      :host([repeat-button]) .repeat-action {
+        float: left;
+        display: block;
+        margin-top: 1rem;
+      }
+
+      :host([repeat-button]) .hint, :host([repeat-button]) .optional, :host([repeat-button]) input {
+        float: left;
+      }
+
+      :host([repeat-button]) input {
+        clear: left;
+      }
+
+      @media (min-width: 768px) {
+
+        :host, #repeat-action {
+          display: -webkit-box;
+          display: -webkit-flex;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-flex-wrap: wrap;
+          -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+        }
+
+        #fieldControl, #fieldLabel {
+          -webkit-flex-basis: 0;
+          -ms-flex-preferred-size: 0;
+          flex-basis: 0;
+          -webkit-box-flex: 1;
+          -webkit-flex-grow: 1;
+          -ms-flex-positive: 1;
+          flex-grow: 1;
+          max-width: 100%;
+        }
+
+        #fieldLabel {
+          -webkit-box-flex: 0;
+          -webkit-flex: 0 0 16.66667%;
+          -ms-flex: 0 0 16.66667%;
+          flex: 0 0 16.66667%;
+          max-width: 16.66667%;
+          display: block;
+          text-align: right;
+        }
+
+        #fieldControl {
+          display: block;
+        }
+
+        :host([repeat-button]) .repeat-action {
+          margin-top: 0;
+        }
       }
 
     </style>

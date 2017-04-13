@@ -1,5 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="id-form-styles.html">
+<link rel="import" href="./id-form-styles.html">
+<link rel="import" href="./id-form-element-mixin.html">
+<link rel="import" href="../id-button/id-button.html">
 
 <!--
 `id-input` is a single-line text field with Idaho styling.
@@ -56,59 +58,30 @@
         outline: 0;
       }
 
-    </style>
-    <label class="field-label">[[label]]</label><div class="field-control">
-      <template is="dom-if" if="{{!required}}"><span class="optional">(Optional)</span></template><template is="dom-if" if="{{hint}}"><span class="hint">[[hint]]</span></template>
-      <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]">
+      :host([repeat-button]) input {
+        float: left;
+        margin-right: 1rem;
+      }
 
+    </style>
+    <template is="dom-if" if="[[label]]">
+      <label id="fieldLabel">[[label]]</label>
+    </template>
+    <div id="fieldControl">
+      <template is="dom-if" if="[[!required]]"><span class="optional">(Optional)</span></template><template is="dom-if" if="{{hint}}"><span class="hint">[[hint]]</span></template>
+      <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]">
     </div>
   </template>
 
   <script>
-    class IdInput extends Polymer.Element {
+    class IdInput extends IdFormElementMixin(Polymer.Element) {
       static get is() { return 'id-input'; }
       static get properties() {
         return {
           /**
-           * The value for this input.
-          **/
-          bindValue: {
-            type: String,
-            notify: true,
-            value: ''
-          },
-          /**
-           * The label for this input.
-          **/
-          label: String,
-          /**
-           * The name for this input.
-          **/
-          name: String,
-          /**
            * The type of the input. The supported types are text, number, email, tel and password.
           **/
           type: String,
-          /**
-           * Determines whether to apply the invalid style.
-          **/
-          invalid: {
-            type: Boolean,
-            value: false,
-            reflectToAttribute: true
-          },
-          /**
-           * The requirement for this input.
-          **/
-          required: {
-            type: Boolean,
-            value: false,
-            reflectToAttribute: true
-          },
-          /**
-           * Description text appearing above the input.
-          **/
-          hint: String,
           /**
            * The masking for the input. <i>For more information, see the [Inputmask 3.x](https://github.com/RobinHerbots/Inputmask) documentation.</i>
           **/
@@ -125,25 +98,9 @@
           **/
           allowIncomplete: {
             type: Boolean,
-            value: false
+            value: true
           }
         };
-      }
-
-      /**
-       * Sets the invalid boolean for styling.
-       * @param  {boolean} valid Is the input valid or not.
-       * @return null
-       */
-      validate(valid) {
-        this.set('invalid', !valid);
-      }
-
-      /**
-       * Set the bind value for masked inputs.
-       */
-      _setValue() {
-        this.set('bindValue', $(this.$.input).val());
       }
 
       ready() {
@@ -155,6 +112,7 @@
             placeholder: " ",
             autoUnmask: this.autoUnmask,
             oncomplete: this._setValue.bind(this),
+            oncleared: this._setValue.bind(this),
             clearIncomplete: true
           }
 

@@ -1,0 +1,83 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="id-form-styles.html">
+<link rel="import" href="./id-form-element-mixin.html">
+<link rel="import" href="../id-button/id-button.html">
+<!--
+`id-input` is a single-line text field with Idaho styling.
+
+@demo demo/index.html
+-->
+
+<dom-module id="id-textarea">
+  <template>
+    <style include="id-form-styles">
+
+      @media (min-width: 768px) {
+        :host(.lg) textarea {
+          width: 80%;
+        }
+
+        :host(.md) textarea {
+          width: 50%;
+        }
+
+        :host(.sm) textarea {
+          width: 25%;
+        }
+
+        :host(.xs) textarea {
+          width: 15%;
+        }
+      }
+
+      textarea {
+        font-size: 100%;
+        display: block;
+        width: 100%;
+        padding: .5rem .75rem;
+        line-height: 1.25;
+        color: #464a4c;
+        background-color: #fff;
+        background-image: none;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        border: 1px solid rgba(0,0,0,.15);
+        border-radius: .25rem;
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+      }
+
+      textarea:focus {
+        color: #464a4c;
+        background-color: #fff;
+        border-color: #5cb3fd;
+        outline: 0;
+      }
+
+      :host([repeat-button]) textarea {
+        float: left;
+        margin-right: 1rem;
+      }
+
+    </style>
+    <template is="dom-if" if="[[label]]"><label id="fieldLabel">[[label]]</label></template><div id="fieldControl">
+      <template is="dom-if" if="[[!required]]"><span class="optional">(Optional)</span></template><template is="dom-if" if="{{hint}}"><span class="hint">[[hint]]</span></template>
+      <textarea value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]"></textarea>
+    </div>
+  </template>
+
+  <script>
+    class IdTextarea extends IdFormElementMixin(Polymer.Element) {
+      static get is() { return 'id-textarea'; }
+
+      ready() {
+        super.ready();
+      }
+    }
+
+    window.customElements.define(IdTextarea.is, IdTextarea);
+  </script>
+</dom-module>
