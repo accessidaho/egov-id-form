@@ -86,20 +86,7 @@
            * The masking for the input. <i>For more information, see the [Inputmask 3.x](https://github.com/RobinHerbots/Inputmask) documentation.</i>
           **/
           mask: String,
-          /**
-           * Automatically unmask the variable on blur.
-          **/
-          autoUnmask: {
-            type: Boolean,
-            value: true
-          },
-          /**
-           * Allow the variable to be updated if the mask isn't satisfied.
-          **/
-          allowIncomplete: {
-            type: Boolean,
-            value: true
-          }
+          maskOptions: Object
         };
       }
 
@@ -112,22 +99,8 @@
 
         // Set masking.
         if (this.mask) {
-          let options = {
-            placeholder: " ",
-            autoUnmask: this.autoUnmask,
-            oncomplete: this._setValue.bind(this),
-            oncleared: this._setValue.bind(this),
-            clearIncomplete: true
-          }
-
-          // Update the variable if allow-incomplete is set.
-          if (this.allowIncomplete) {
-            options.onincomplete = this._setValue.bind(this);
-            options.clearIncomplete = false;
-          }
-
           // Bind it.
-          $(this.$.input).inputmask(this.mask, options);
+          $(this.$.input).mask(this.mask, this.options);
         }
       }
     }

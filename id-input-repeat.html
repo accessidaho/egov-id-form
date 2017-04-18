@@ -52,6 +52,7 @@ The library includes a collection of built-in validators and errors messages. Er
           repeat-index="[[index]]"
           repeat-button-text="[[repeatButtonText]]"
           repeat-last="[[_isLastIndex(index, bindValue.length)]]"
+          invalid="[[_isValid(index, invalid)]]"
           on-add-repeat="addRow"
           on-clear-empty="_clearEmpty">
         </id-input-repeat-row>
@@ -71,25 +72,74 @@ The library includes a collection of built-in validators and errors messages. Er
             type: Array,
             notify: true,
           },
+          /**
+           * Repeat the label for additional rows.
+           */
           repeatLabel: {
             type: Boolean,
             value: false
           },
+          /**
+           * Clear empty rows on blur
+           */
           clearEmptyOnBlur: {
             type: Boolean,
             value: false
           },
+          /**
+           * What to add to the repeat button.
+           */
           repeatButtonText: {
             type: String,
             value: 'Add'
+          },
+          /**
+           * Invalid array for highlighting rows.
+           */
+          invalid: {
+            type: Array,
+            value: []
           }
         }
       }
 
+      /**
+       * Sets the invalid boolean for styling.
+       * @param  {boolean} valid Is the input valid or not.
+       * @return null
+       */
+      validate(valid) {
+        if (valid.constructor === Array) {
+          this.set('invalid', valid);
+        } else {
+          this.set('invalid', []);
+        }
+      }
+
+      /**
+       * Check if repeat is valid
+       * @param  {number}  index   Index of element
+       * @param  {array}   invalid Invalid array to check
+       * @return {Boolean}
+       */
+      _isValid(index, invalid) {
+        return (invalid && invalid[index]);
+      }
+
+      /**
+       * Checks if the row is the last. For button placement.
+       * @param  {number}  index     Index of row.
+       * @param  {array}   bindValue Repeatable element value.
+       * @return {Boolean}           Whether or not it's the last.
+       */
       _isLastIndex(index, bindValue) {
         return ((bindValue-1) === index);
       }
 
+      /**
+       * Adds a new row to the array.
+       * @param {object} e Event from button.
+       */
       addRow(e) {
         if (e) {
           e.stopPropagation();
@@ -106,46 +156,35 @@ The library includes a collection of built-in validators and errors messages. Er
         }
       }
 
-      deleteRow() {
-        if (this.bindValue.length > 1) {
-          this.splice('bindValue', this.bindValue.length-1, 1);
-        }
-      }
-
+      /**
+       * Finds repeatable fields in the slot
+       * @return {array} Repeatable fields.
+       */
       _getRepeatableFields() {
         this.repeatFields = this.$.content.assignedNodes().filter(field => !field.disabled && field.name);
 
         if (this.repeatFields.length > 1 && !this.bindValue.length) {
           this.bindValue[0] = {};
         }
+
+        return this.repeatFields;
       }
 
+      /**
+       * Clears empty fields on blur
+       * @param  {object} e Event from blur
+       * @return {null}
+       */
       _clearEmpty(e) {
         if (this.clearEmptyOnBlur && this.bindValue.length > 1) {
           this.splice('bindValue', e.detail.index, 1);
         }
       }
 
-      _getButtonLeft() {
-        let lastClass = this.repeatFields[this.repeatFields.length-1].className;
-        let widths = {
-          lg: '80%',
-          md: '53%',
-          sm: '25%',
-          xs: '15%'
-        };
-
-        if (lastClass && widths[lastClass]) {
-          this.updateStyles({'--buttonLeft': widths[lastClass]});
-        }
-
-      }
-
       ready() {
         super.ready();
         this.repeatFields = [];
         this._getRepeatableFields();
-        this._getButtonLeft();
       }
     }
 

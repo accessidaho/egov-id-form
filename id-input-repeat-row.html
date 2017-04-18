@@ -33,6 +33,16 @@ The library includes a collection of built-in validators and errors messages. Er
         display: block;
         overflow: hidden;
       }
+
+      :host([invalid]) {
+        background-color: #FBE9E7;
+        border: 1px solid #c62828;
+        border-radius: 4px;
+        padding: 1rem 0;
+        margin-left: -1px;
+        margin-right: -1px;
+        margin-bottom: 1rem;
+      }
     </style>
 
     <div id="fields"></div>
@@ -43,33 +53,61 @@ The library includes a collection of built-in validators and errors messages. Er
       static get is() { return 'id-input-repeat-row'; }
       static get properties() {
         return {
+          /**
+           * Repeatable form elements.
+           */
           repeats: {
             type: Array,
             value: []
           },
+          /**
+           * Value of the form element.
+           */
           value: {
             type: String,
             value: '',
             observer: '_updateValue',
             notify: true
           },
+          /**
+           * Whether or not to repeat the form label.
+           */
           repeatLabel: {
             type: Boolean,
             value: false
           },
+          /**
+           * If this is the last repeat. (Positions the button here.)
+           */
           repeatLast: {
             type: Boolean,
             value: false,
             reflectToAttribute: true,
             observer: '_updateRepeatButton'
           },
+          /**
+           * Add buttons text.
+           */
           repeatButtonText: {
             type: String,
             value: 'Add'
+          },
+          /**
+           * Determines whether to apply the invalid style.
+          **/
+          invalid: {
+            type: Boolean,
+            value: false,
+            reflectToAttribute: true
           }
         }
       }
 
+      /**
+       * Adds a field to the repeat row.
+       * @param {object} field Node of the field to repeat
+       * @param {index}  i     Used for the repeat button placement.
+       */
       _addField(field, i) {
         var newField = field.cloneNode(true);
 
@@ -92,12 +130,21 @@ The library includes a collection of built-in validators and errors messages. Er
         return newField;
       }
 
+      /**
+       * When the field blurs and the element is empty.
+       * @return {null}
+       */
       _blur() {
         if (this.value === '') {
           this.dispatchEvent(new CustomEvent('clear-empty', {detail: {index: this.repeatIndex}}));
         }
       }
 
+      /**
+       * Updates the bound value of the created form element.
+       * @param  {object} e Event of the update
+       * @return {null}
+       */
       _updateBindValue(e) {
         e.stopPropagation();
         this._appended.forEach(field => {
@@ -109,7 +156,11 @@ The library includes a collection of built-in validators and errors messages. Er
         });
       }
 
-      _updateValue(newVal, oldVal) {
+      /**
+       * Updates the value when passed from an external origin
+       * @return {null}
+       */
+      _updateValue() {
         if (this._init) {
           this._appended.forEach(field => {
             if (this.repeats.length > 1) {
@@ -121,6 +172,10 @@ The library includes a collection of built-in validators and errors messages. Er
         }
       }
 
+      /**
+       * Moves the repeat button to the final row.
+       * @return {null}
+       */
       _updateRepeatButton() {
         if (this._appended) {
           this._appended.forEach((field, i) => {
@@ -133,6 +188,11 @@ The library includes a collection of built-in validators and errors messages. Er
         }
       }
 
+      /**
+       * Finds the value path based on repeat length.
+       * @param  {object} field field object
+       * @return {mixed}        field value.
+       */
       _valuePath(field) {
         return (this.repeats.length > 1) ? this.value[field.name] : this.value;
       }

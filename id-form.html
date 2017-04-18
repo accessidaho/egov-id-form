@@ -2,6 +2,7 @@
 <link rel="import" href="../iron-ajax/iron-ajax.html">
 <link rel="import" href="../id-alert/id-alert.html">
 <link rel="import" href="./dependencies.html">
+<link rel="import" href="../polymer/lib/utils/flattened-nodes-observer.html">
 
 <!--
 `id-form`
@@ -112,6 +113,25 @@ The library includes a collection of built-in validators and errors messages. Er
       }
 
       /**
+       * Loops through child elements to get shadow content fields.
+       *
+       * @param  {object} el Element in question
+       * @return {null}
+       */
+      _getChildFields(el) {
+        let children = Polymer.FlattenedNodesObserver.getFlattenedNodes(el);
+        if (children.length) {
+          children.forEach(child => this._getChildFields(child));
+        }
+
+        let name = el.name || el.id;
+
+        if (!el.disabled && name && name.search('\\[') === -1) {
+          this.fields[name] = el;
+        }
+      }
+
+      /**
        * This is called when the form is attached to the dom.
        * It collects a list of children elements for
        * validation reasons.
@@ -121,11 +141,7 @@ The library includes a collection of built-in validators and errors messages. Er
       _getFields() {
         let elements = this.$.content.assignedNodes();
         this.fields = {};
-        for (var el, j = 0; el = elements[j], j < elements.length; j++) {
-          if (!el.disabled && el.name) {
-            this.fields[el.name] = el;
-          }
-        }
+        elements.forEach(el => this._getChildFields(el));
       }
 
       /**
@@ -193,8 +209,15 @@ The library includes a collection of built-in validators and errors messages. Er
 
         if (errors) {
           Object.keys(errors).forEach((key) => {
-            if (this.fields[key]) {
-              this.fields[key].validate(false);
+            let field = this.fields[key];
+
+            if (field) {
+              if (field.bindValue && field.bindValue.constructor === Array) {
+                field.validate(errors[key]);
+              } else {
+                field.validate(false);
+              }
+
             }
 
             errors[key].forEach((error) => flatErrors.push(error));
@@ -202,6 +225,10 @@ The library includes a collection of built-in validators and errors messages. Er
         }
 
         this.set('errors', flatErrors);
+
+        $('html, body').animate({
+          scrollTop: this.offsetTop
+        }, 250);
 
         return (flatErrors.length) ? false : true;
       }

@@ -117,6 +117,13 @@
       select(value) {
         this.set('bindValue', value);
       }
+
+      ready() {
+        super.ready();
+        if (!this.bindValue) {
+          this.bindValue = this.choices[0];
+        }
+      }
     }
 
     window.customElements.define(IdSelect.is, IdSelect);
