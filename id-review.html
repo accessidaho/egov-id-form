@@ -11,13 +11,15 @@
 <dom-module id="id-review">
   <template>
     <style include="id-form-styles">
-
+      #fieldControl {
+        padding-top: 7px;
+      }
     </style>
 
     <template is="dom-if" if="[[label]]">
       <label id="fieldLabel">[[label]]</label>
     </template>
-    <div class="fieldControl">
+    <div id="fieldControl">
       [[bindValue]]
     </div>
   </template>
@@ -69,10 +71,6 @@
           this.bindValue = this.boolText[0];
         }
 
-        // Apply mask if present.
-        if (this.mask) {
-          this.bindValue = Inputmask.format(this.bindValue, {alias: this.mask});
-        }
       }
     }
 

@@ -224,13 +224,17 @@ The library includes a collection of built-in validators and errors messages. Er
           });
         }
 
-        this.set('errors', flatErrors);
 
-        $('html, body').animate({
-          scrollTop: this.offsetTop
-        }, 250);
+        this.set('errors', flatErrors.filter(x => x !== null));
 
-        return (flatErrors.length) ? false : true;
+        if (this.errors.length) {
+          $('html, body').animate({
+            scrollTop: this.offsetTop
+          }, 250);
+        }
+
+
+        return (this.errors.length) ? false : true;
       }
     }
 
