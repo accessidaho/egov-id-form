@@ -124,7 +124,7 @@ The library includes a collection of built-in validators and errors messages. Er
         let nameOrFalse = (this.repeats.length > 1) ? newField.name : false;
         newField.bindValue = this._valuePath(newField);
         newField.addEventListener('bind-value-changed', this._updateBindValue.bind(this));
-        newField.addEventListener('blur', this._blur.bind(this));
+        newField.addEventListener('input-blur', this._blur.bind(this));
 
         Polymer.dom(this.$.fields).appendChild(newField);
         return newField;

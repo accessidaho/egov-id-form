@@ -97,6 +97,13 @@
       ready() {
         super.ready();
 
+        /**
+         * Hack for Safari and browsers who don't support event bubbling on input fields.
+         */
+        this.$.input.addEventListener('blur', () => {
+          this.dispatchEvent(new CustomEvent('input-blur'));
+        });
+
         // Set masking.
         if (this.mask) {
           // Bind it.
