@@ -1,0 +1,117 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="./id-form-styles.html">
+<link rel="import" href="./id-form-element-mixin.html">
+<link rel="import" href="../id-button/id-button.html">
+
+<!--
+`id-input` is a single-line text field with Idaho styling.
+
+@demo demo/index.html
+-->
+
+<dom-module id="id-input-phone">
+  <template>
+    <style include="id-form-styles">
+
+      @media (min-width: 768px) {
+        :host(.lg) input {
+          width: 80%;
+        }
+
+        :host(.md) input {
+          width: 50%;
+        }
+
+        :host(.sm) input {
+          width: 25%;
+        }
+
+        :host(.xs) input {
+          width: 15%;
+        }
+      }
+
+      input {
+        font-size: 100%;
+        display: block;
+        width: 100%;
+        padding: .5rem .75rem;
+        line-height: 1.25;
+        color: #464a4c;
+        background-color: #fff;
+        background-image: none;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        border: 1px solid rgba(0,0,0,.15);
+        border-radius: .25rem;
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+      }
+
+      input:focus {
+        color: #464a4c;
+        background-color: #fff;
+        border-color: #5cb3fd;
+        outline: 0;
+      }
+
+      :host([repeat-button]) input {
+        float: left;
+        margin-right: 1rem;
+      }
+
+    </style>
+    <template is="dom-if" if="[[label]]">
+      <label id="fieldLabel">[[label]]</label>
+    </template>
+    <div id="fieldControl">
+      <template is="dom-if" if="[[!required]]"><span class="optional">(Optional)</span></template><template is="dom-if" if="{{hint}}"><span class="hint">[[hint]]</span></template>
+      <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]">
+    </div>
+  </template>
+
+  <script>
+    class IdInputPhone extends IdFormElementMixin(Polymer.Element) {
+      static get is() { return 'id-input-phone'; }
+      static get properties() {
+        return {
+          /**
+           * The type of the input. The supported types are text, number, email, tel and password.
+          **/
+          type: String,
+          /**
+           * The masking for the input. <i>For more information, see the [Inputmask 3.x](https://github.com/RobinHerbots/Inputmask) documentation.</i>
+          **/
+          mask: String,
+          maskOptions: Object
+        };
+      }
+
+      _setValue() {
+        this.bindValue = this.$.input.value;
+      }
+
+      ready() {
+        super.ready();
+
+        /**
+         * Hack for Safari and browsers who don't support event bubbling on input fields.
+         */
+        this.$.input.addEventListener('blur', () => {
+          this.dispatchEvent(new CustomEvent('input-blur'));
+        });
+
+        // Set masking.
+        if (this.mask) {
+          // Bind it.
+          $(this.$.input).mask(this.mask, this.options);
+        }
+      }
+    }
+
+    window.customElements.define(IdInputPhone.is, IdInputPhone);
+  </script>
+</dom-module>

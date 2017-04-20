@@ -38,7 +38,7 @@ The library includes a collection of built-in validators and errors messages. Er
         background-color: #FBE9E7;
         border: 1px solid #c62828;
         border-radius: 4px;
-        padding: 1rem 0;
+        padding: 1rem 0 0;
         margin-left: -1px;
         margin-right: -1px;
         margin-bottom: 1rem;
@@ -49,7 +49,7 @@ The library includes a collection of built-in validators and errors messages. Er
   </template>
 
   <script>
-    class IdInputRepeatRow extends Polymer.Element {
+    class IdInputRepeatRow extends Polymer.MutableData(Polymer.Element) {
       static get is() { return 'id-input-repeat-row'; }
       static get properties() {
         return {
@@ -149,10 +149,12 @@ The library includes a collection of built-in validators and errors messages. Er
         e.stopPropagation();
         this._appended.forEach(field => {
           if (this.repeats.length > 1) {
-            this.value[field.name] = field.bindValue;
+            this.set('value.'+field.name, field.bindValue);
           } else {
-            this.value = field.bindValue;
+            this.set('value', field.bindValue);
           }
+
+          this.notifyPath('value');
         });
       }
 

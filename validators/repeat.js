@@ -11,7 +11,7 @@
         return "must be an array."
       }
 
-      return values.map(v => {
+      return values.map((v, i) => {
         if (v === '') v = null;
         let validation = validate.single(v, options);
         if (validation) {
@@ -19,7 +19,11 @@
             return validate.capitalize(validate.prettify(key) + ' ' + a);
           })
         }
-        return (validation || null);
+
+        /**
+         * This is to get around validate.js stripping non unique values.
+         */
+        return (validation || i+1);
       });
     };
   }

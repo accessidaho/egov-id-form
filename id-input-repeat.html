@@ -30,8 +30,8 @@ The library includes a collection of built-in validators and errors messages. Er
     <style include="id-form-styles">
       :host {
         display: block;
-        margin-bottom: 1em;
         position: relative;
+        margin-bottom: 0;
       }
 
       #original {
@@ -44,7 +44,7 @@ The library includes a collection of built-in validators and errors messages. Er
       <slot id="content"></slot>
     </div>
     <div id="repeats">
-      <template is="dom-repeat" items="[[bindValue]]">
+      <template is="dom-repeat" items="{{bindValue}}">
         <id-input-repeat-row
           value="{{item}}"
           repeats="[[repeatFields]]"
@@ -61,7 +61,7 @@ The library includes a collection of built-in validators and errors messages. Er
   </template>
 
   <script>
-    class IdInputRepeat extends Polymer.Element {
+    class IdInputRepeat extends Polymer.MutableData(Polymer.Element) {
       static get is() { return 'id-input-repeat'; }
       static get properties() {
         return {
@@ -114,6 +114,8 @@ The library includes a collection of built-in validators and errors messages. Er
         } else {
           this.set('invalid', []);
         }
+
+        this.set('bindValue', this.bindValue.filter(x => x !== ''))
       }
 
       /**
@@ -123,7 +125,7 @@ The library includes a collection of built-in validators and errors messages. Er
        * @return {Boolean}
        */
       _isValid(index, invalid) {
-        return (invalid && invalid[index]);
+        return (invalid[index] && (typeof invalid[index] !== 'number'));
       }
 
       /**
