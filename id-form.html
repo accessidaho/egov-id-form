@@ -199,13 +199,12 @@ The library includes a collection of built-in validators and errors messages. Er
        *
        * @return {boolean}
       **/
-      validate() {
+      validate(addErrors) {
 
         this._resetFields();
         this._clearEmptyValues();
 
         let errors = validate(this.data, this.constraints);
-        console.log(errors);
         let flatErrors = [];
 
         if (errors) {
@@ -225,8 +224,11 @@ The library includes a collection of built-in validators and errors messages. Er
           });
         }
 
+        if (addErrors) {
+          flatErrors = flatErrors.concat(addErrors);
+        }
 
-        this.set('errors', flatErrors.filter(x => x !== null));
+        this.set('errors', flatErrors.filter(x => typeof x !== 'number'));
 
         if (this.errors.length) {
           $('html, body').animate({

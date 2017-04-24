@@ -115,7 +115,8 @@ The library includes a collection of built-in validators and errors messages. Er
           this.set('invalid', []);
         }
 
-        this.set('bindValue', this.bindValue.filter(x => x !== ''))
+        this.set('bindValue', this.bindValue.filter(x => x !== ''));
+        if (!this.bindValue.length) this.set('bindValue', ['']);
       }
 
       /**
@@ -187,6 +188,10 @@ The library includes a collection of built-in validators and errors messages. Er
         super.ready();
         this.repeatFields = [];
         this._getRepeatableFields();
+
+        if (!this.bindValue.length) {
+          this.bindValue = [''];
+        }
       }
     }
 

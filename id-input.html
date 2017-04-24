@@ -85,8 +85,15 @@
           /**
            * The masking for the input. <i>For more information, see the [Inputmask 3.x](https://github.com/RobinHerbots/Inputmask) documentation.</i>
           **/
-          mask: String,
-          maskOptions: Object
+          mask: Boolean,
+          maskOptions: {
+            type: Object,
+            value: {
+              delimiter: '·',
+              blocks: [3, 3, 3],
+              uppercase: true
+            }
+          }
         };
       }
 
@@ -107,7 +114,8 @@
         // Set masking.
         if (this.mask) {
           // Bind it.
-          $(this.$.input).mask(this.mask, this.options);
+
+          this.cleave = new Cleave(this.$.input, this.maskOptions);
         }
       }
     }
