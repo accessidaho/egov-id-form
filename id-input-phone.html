@@ -167,13 +167,13 @@
           <span class="input-group-button">
             <id-button
               btn-group="left"
-              on-tap="open"
+              on-tap="__openDropdown"
               color="secondary">
 
               <span class$="flag-icon flag-icon-[[selectedCountry.1]]"></span><span class="dropdown-arrows"></span>
             </id-button>
           </span>
-          <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]">
+          <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]" hidden="[[mask]]">
         </div>
         <iron-dropdown
           horizontal-align="left"
@@ -181,7 +181,7 @@
           id="dropdown">
 
           <div slot="dropdown-content">
-            <template is="dom-repeat" items="[[countryList]]" filter="isCountryEnabled">
+            <template is="dom-repeat" items="[[countryList]]" filter="__isCountryEnabled">
               <a on-tap="selectCountry"><span class$="flag-icon flag-icon-[[item.1]]"></span> [[item.0]] <span class="country-code">(+[[item.2]])</span></a>
             </template>
           </div>
@@ -206,27 +206,55 @@
         }
       }
 
-      open() {
+      __openDropdown() {
         this.$.dropdown.open();
       }
 
       selectCountry(e) {
         this.selectedCountry = e.model.item;
-        this.cleave.setPhoneRegionCode(this.selectedCountry[1].toUpperCase());
+        this.__cleave.setPhoneRegionCode(this.selectedCountry[1].toUpperCase());
         this.$.dropdown.close();
+        this.__updateValue();
       }
 
-      isCountryEnabled(item) {
+      __isCountryEnabled(item) {
         return this.countries.find(x => x === item[1]);
       }
 
+      __maskedInput() {
+        let maskedInputNode = document.createElement('input');
+        maskedInputNode.setAttribute('id', 'maskedInput');
+        this.$.fieldControl.getElementsByClassName('input-group')[0].appendChild(maskedInputNode);
+        maskedInputNode.addEventListener('input', e => this.__updateValue(e));
+
+        return maskedInputNode;
+      }
+
+      __updateValue(e) {
+        this.set('bindValue', {
+          region: this.selectedCountry[2],
+          number: this.__cleave.getRawValue(),
+          country: this.selectedCountry[0]
+        });
+      }
+
+      __setCleaveValue() {
+        this.__cleave.setRawValue(this.bindValue.number);
+      }
+
       ready() {
-        this.selectedCountry = this.countryList.find(x => x[1] === this.countries[0]);
-        this.maskOptions = {
-            phone: true,
-            delimiter: '-',
-            phoneRegionCode: this.selectedCountry[1].toUpperCase()
+        if ( (typeof this.bindValue === "object") && (this.bindValue !== null) ) {
+          this.selectedCountry = this.countryList.find(x => x[0] === this.bindValue.country);
+        } else {
+          this.selectedCountry = this.countryList.find(x => x[1] === this.countries[0]);
+        }
+
+        this.mask = {
+          phone: true,
+          delimiter: '-',
+          phoneRegionCode: this.selectedCountry[1].toUpperCase()
         };
+
         super.ready();
       }
     }

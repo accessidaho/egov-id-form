@@ -109,6 +109,7 @@ The library includes a collection of built-in validators and errors messages. Er
       ready() {
         super.ready();
         this.$.helper.addEventListener('submit', e => this.validate(e));
+        this.addEventListener('id-form-submit', e => this.validate(e));
         this._getFields();
       }
 
@@ -199,7 +200,7 @@ The library includes a collection of built-in validators and errors messages. Er
        *
        * @return {boolean}
       **/
-      validate(addErrors) {
+      validate(e, addErrors) {
 
         this._resetFields();
         this._clearEmptyValues();
@@ -236,7 +237,11 @@ The library includes a collection of built-in validators and errors messages. Er
           }, 250);
         }
 
-
+        if (e) {
+          if (this.errors.length) {
+            return this.submit();
+          }
+        }
         return (this.errors.length) ? false : true;
       }
     }

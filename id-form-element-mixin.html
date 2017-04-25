@@ -46,6 +46,9 @@
           value: false,
           reflectToAttribute: true
         },
+        /**
+         * Repeat button text.
+         */
         repeatButtonText: {
           type: String,
           value: 'Add'
@@ -63,19 +66,47 @@
     }
 
     /**
-     * Connected callback setup the repeat button.
-     * @return null
+     * Add repeat button for repeatable fields.
      */
-    connectedCallback() {
-      super.connectedCallback();
-
+    __addRepeatButton() {
       let button = document.createElement('id-button');
       button.setAttribute('event-name', 'add-repeat');
       button.setAttribute('outline', '');
       button.className = 'repeat-action';
       button.innerHTML = '<i class="fa fa-plus" aria-hidden="true"></i> ' + this.repeatButtonText;
 
-      Polymer.dom(this.$.fieldControl).appendChild(button);
+      return Polymer.dom(this.$.fieldControl).appendChild(button);
+    }
+
+    /**
+     * Add event listener for enter key.
+     */
+    __addEnterEvent() {
+      if (this.$.input) {
+        return this.$.input.addEventListener('keypress', this.__handleEnterKey.bind(this));
+      }
+    }
+
+    /**
+     * Check for keyCode or 13
+     * @param  {object} e Event object
+     * @return {event}    Event is returned or undefined.
+     */
+    __handleEnterKey(e) {
+      if ((e.which || e.keyCode) == 13) {
+        return this.dispatchEvent(new CustomEvent('id-form-submit', {bubbles: true, composed: true}));
+      } else {
+        return;
+      }
+    }
+
+    /**
+     * Connected callback setup the repeat button.
+     */
+    connectedCallback() {
+      super.connectedCallback();
+      this._repeatButtonNode = this.__addRepeatButton();
+      this.__addEnterEvent();
     }
   };
 </script>

@@ -31,6 +31,10 @@
         }
       }
 
+      :host(.numeral) input {
+        text-align: right;
+      }
+
       input {
         font-size: 100%;
         display: block;
@@ -69,7 +73,7 @@
     </template>
     <div id="fieldControl">
       <template is="dom-if" if="[[!required]]"><span class="optional">(Optional)</span></template><template is="dom-if" if="{{hint}}"><span class="hint">[[hint]]</span></template>
-      <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]">
+      <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]" hidden="[[mask]]">
     </div>
   </template>
 
@@ -83,27 +87,34 @@
           **/
           type: String,
           /**
-           * The masking for the input. <i>For more information, see the [Inputmask 3.x](https://github.com/RobinHerbots/Inputmask) documentation.</i>
+           * The masking for the input. <i>For more information, see the [Cleave.js](https://nosir.github.io/cleave.js/) documentation.</i>
           **/
-          mask: Boolean,
-          maskOptions: {
+          mask: {
             type: Object,
-            value: {
-              delimiter: '·',
-              blocks: [3, 3, 3],
-              uppercase: true
-            }
+            value: false
           }
         };
       }
 
-      _setValue() {
-        this.bindValue = this.$.input.value;
+      __updateValue(e) {
+        this.set('bindValue', this.__cleave.getRawValue());
+      }
+
+      __maskedInput() {
+        let maskedInputNode = document.createElement('input');
+        maskedInputNode.setAttribute('id', 'maskedInput');
+        Polymer.dom(this.$.fieldControl).appendChild(maskedInputNode);
+        maskedInputNode.addEventListener('input', e => this.__updateValue(e));
+
+        return maskedInputNode;
+      }
+
+      __setCleaveValue() {
+        this.__cleave.setRawValue(this.bindValue || '');
       }
 
       ready() {
         super.ready();
-
         /**
          * Hack for Safari and browsers who don't support event bubbling on input fields.
          */
@@ -111,11 +122,10 @@
           this.dispatchEvent(new CustomEvent('input-blur'));
         });
 
-        // Set masking.
         if (this.mask) {
-          // Bind it.
-
-          this.cleave = new Cleave(this.$.input, this.maskOptions);
+          let maskedInput = this.__maskedInput();
+          this.__cleave = new Cleave(maskedInput, this.mask);
+          this.__setCleaveValue();
         }
       }
     }
