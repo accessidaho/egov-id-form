@@ -92,6 +92,12 @@
           mask: {
             type: Object,
             value: false
+          },
+          bindValue: {
+            type: String,
+            notify: true,
+            value: '',
+            observer: '__setCleaveValue'
           }
         };
       }
@@ -110,7 +116,9 @@
       }
 
       __setCleaveValue() {
-        this.__cleave.setRawValue(this.bindValue || '');
+        if (this.__cleave) {
+          this.__cleave.setRawValue(this.bindValue || '');
+        }
       }
 
       ready() {
