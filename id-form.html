@@ -110,7 +110,19 @@ The library includes a collection of built-in validators and errors messages. Er
         super.ready();
         this.$.helper.addEventListener('submit', e => this.validate(e));
         this.addEventListener('id-form-submit', e => this.validate(e));
+
+        this.$.xhr.addEventListener('response', this._handleFormResponse.bind(this));
+        this.$.xhr.addEventListener('error', this._handleFormError.bind(this));
+
         this._getFields();
+      }
+
+      _handleFormError(e) {
+        this.dispatchEvent(new CustomEvent('id-form-error', e));
+      }
+
+      _handleFormResponse(e) {
+        this.dispatchEvent(new CustomEvent('id-form-response', e));
       }
 
       /**
