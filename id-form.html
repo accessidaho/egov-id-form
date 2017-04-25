@@ -176,17 +176,18 @@ The library includes a collection of built-in validators and errors messages. Er
        *
        * @return {boolean}
       **/
-      submit() {
+      submit(data) {
 
         let xhr = this.$.xhr;
 
         xhr.contentType = this.contentType;
         xhr.handleAs = this.handleAs;
         xhr.url = this.action;
+        xhr.method = this.method;
 
         // Set body or params of request.
         if (this.method === 'GET') xhr.params = this.data;
-        else xhr.body = this.data;
+        else xhr.body = data || this.data;
 
         // Fire away.
         this.$.xhr.generateRequest();
