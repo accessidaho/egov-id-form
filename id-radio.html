@@ -37,10 +37,10 @@
     <template is="dom-if" if="[[label]]">
       <label id="fieldLabel">[[label]]</label>
     </template>
-    <div id="fieldControl" on-change="_select">
+    <div id="fieldControl" on-change="__select">
       <template is="dom-repeat" items="{{choices}}">
         <div class="radio">
-          <label><input type="radio" name$="[[name]]" value$="[[item]]" checked="{{_selected(item, bindValue)}}">[[item]]</label>
+          <label><input type="radio" name$="[[name]]" value$="[[item]]" checked="{{__selected(item, bindValue)}}">[[item]]</label>
         </div>
       </template>
     </div>
@@ -61,7 +61,7 @@
        * @param  {string} bindValue Value of bindValue variable.
        * @return boolean            Is selected.
        */
-      _selected(item, bindValue) {
+      __selected(item, bindValue) {
         return (item === bindValue);
       }
 
@@ -72,7 +72,7 @@
        * @param  {object} sender Node that sent the event
        * @return null
        */
-      _select(e, detail, sender) {
+      __select(e, detail, sender) {
         this.select(e.target.value);
       }
 

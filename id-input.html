@@ -93,6 +93,9 @@
             type: Object,
             value: false
           },
+          /**
+           * The value for this input.
+          **/
           bindValue: {
             type: String,
             notify: true,
@@ -102,10 +105,16 @@
         };
       }
 
+      /**
+       * Update bindValue with cleave value.
+       */
       __updateValue(e) {
         this.set('bindValue', this.__cleave.getRawValue());
       }
 
+      /**
+       * Setup the masked cleave input.
+       */
       __maskedInput() {
         let maskedInputNode = document.createElement('input');
         maskedInputNode.setAttribute('id', 'maskedInput');
@@ -115,6 +124,9 @@
         return maskedInputNode;
       }
 
+      /**
+       * Sets the initial cleave value.
+       */
       __setCleaveValue() {
         if (this.__cleave) {
           this.__cleave.setRawValue(this.bindValue || '');

@@ -51,10 +51,10 @@ The library includes a collection of built-in validators and errors messages. Er
           repeat-label="[[repeatLabel]]"
           repeat-index="[[index]]"
           repeat-button-text="[[repeatButtonText]]"
-          repeat-last="[[_isLastIndex(index, bindValue.length)]]"
-          invalid="[[_isValid(index, invalid)]]"
+          repeat-last="[[__isLastIndex(index, bindValue.length)]]"
+          invalid="[[__isValid(index, invalid)]]"
           on-add-repeat="addRow"
-          on-clear-empty="_clearEmpty">
+          on-clear-empty="__clearEmpty">
         </id-input-repeat-row>
       </template>
     </div>
@@ -125,7 +125,7 @@ The library includes a collection of built-in validators and errors messages. Er
        * @param  {array}   invalid Invalid array to check
        * @return {Boolean}
        */
-      _isValid(index, invalid) {
+      __isValid(index, invalid) {
         return (invalid[index] && (typeof invalid[index] !== 'number'));
       }
 
@@ -135,7 +135,7 @@ The library includes a collection of built-in validators and errors messages. Er
        * @param  {array}   bindValue Repeatable element value.
        * @return {Boolean}           Whether or not it's the last.
        */
-      _isLastIndex(index, bindValue) {
+      __isLastIndex(index, bindValue) {
         return ((bindValue-1) === index);
       }
 
@@ -163,14 +163,14 @@ The library includes a collection of built-in validators and errors messages. Er
        * Finds repeatable fields in the slot
        * @return {array} Repeatable fields.
        */
-      _getRepeatableFields() {
-        this.repeatFields = this.$.content.assignedNodes().filter(field => !field.disabled && field.name);
+      __getRepeatableFields() {
+        let repeatFields = this.$.content.assignedNodes().filter(field => !field.disabled && field.name);
 
-        if (this.repeatFields.length > 1 && !this.bindValue.length) {
+        if (repeatFields.length > 1 && !this.bindValue.length) {
           this.bindValue[0] = {};
         }
 
-        return this.repeatFields;
+        return repeatFields;
       }
 
       /**
@@ -178,7 +178,7 @@ The library includes a collection of built-in validators and errors messages. Er
        * @param  {object} e Event from blur
        * @return {null}
        */
-      _clearEmpty(e) {
+      __clearEmpty(e) {
         if (this.clearEmptyOnBlur && this.bindValue.length > 1) {
           this.splice('bindValue', e.detail.index, 1);
         }
@@ -186,8 +186,7 @@ The library includes a collection of built-in validators and errors messages. Er
 
       ready() {
         super.ready();
-        this.repeatFields = [];
-        this._getRepeatableFields();
+        this.repeatFields = this.__getRepeatableFields();
 
         if (!this.bindValue.length) {
           this.bindValue = [''];

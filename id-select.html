@@ -64,9 +64,9 @@
       <label id="fieldLabel">[[label]]</label>
     </template>
     <div id="fieldControl">
-      <select name$="[[name]]" on-change="_select">
+      <select name$="[[name]]" on-change="__select">
         <template is="dom-repeat" items="{{choices}}">
-            <option value$="[[item]]" selected="{{_selected(item, bindValue)}}">[[item]]</option>
+            <option value$="[[item]]" selected="{{__selected(item, bindValue)}}">[[item]]</option>
         </template>
       </select>
     </div>
@@ -90,7 +90,7 @@
        * @param  {string} bindValue Value of bindValue variable.
        * @return boolean            Is selected.
        */
-      _selected(item, bindValue) {
+      __selected(item, bindValue) {
         return (item === bindValue);
       }
 
@@ -101,7 +101,7 @@
        * @param  {object} sender Node that sent the event
        * @return null
        */
-      _select(e, detail, sender) {
+      __select(e, detail, sender) {
         this.select(e.target.value);
       }
 

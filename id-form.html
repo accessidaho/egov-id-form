@@ -106,21 +106,16 @@ The library includes a collection of built-in validators and errors messages. Er
         };
       }
 
-      ready() {
-        super.ready();
-        this.$.helper.addEventListener('submit', e => this.validate(e));
-        this.addEventListener('id-form-submit', e => this.validate(e));
-
-        this.$.xhr.addEventListener('response', this._handleFormResponse.bind(this));
-        this.$.xhr.addEventListener('error', this._handleFormError.bind(this));
-
-        this._getFields();
-      }
-
+      /**
+       * Handles response from iron-ajax success
+       */
       _handleFormError(e) {
         this.dispatchEvent(new CustomEvent('id-form-error', e));
       }
 
+      /**
+       * Handles response from iron-ajax error
+       */
       _handleFormResponse(e) {
         this.dispatchEvent(new CustomEvent('id-form-response', e));
       }
@@ -131,10 +126,10 @@ The library includes a collection of built-in validators and errors messages. Er
        * @param  {object} el Element in question
        * @return {null}
        */
-      _getChildFields(el) {
+      __getChildFields(el) {
         let children = Polymer.FlattenedNodesObserver.getFlattenedNodes(el);
         if (children.length) {
-          children.forEach(child => this._getChildFields(child));
+          children.forEach(child => this.__getChildFields(child));
         }
 
         let name = el.name || el.id;
@@ -151,10 +146,10 @@ The library includes a collection of built-in validators and errors messages. Er
        *
        * @return {null}
       **/
-      _getFields() {
+      __getFields() {
         let elements = this.$.content.assignedNodes();
         this.fields = {};
-        elements.forEach(el => this._getChildFields(el));
+        elements.forEach(el => this.__getChildFields(el));
       }
 
       /**
@@ -162,7 +157,7 @@ The library includes a collection of built-in validators and errors messages. Er
        *
        * @return {null}
       **/
-      _resetFields() {
+      __resetFields() {
         Object.keys(this.fields).forEach((key) => {
           this.fields[key].validate(true);
         });
@@ -174,7 +169,7 @@ The library includes a collection of built-in validators and errors messages. Er
        *
        * @return {null}
       **/
-      _clearEmptyValues() {
+      __clearEmptyValues() {
         Object.keys(this.data).forEach((key) => {
           if (this.data[key] === '') {
             this.data[key] = null;
@@ -215,8 +210,8 @@ The library includes a collection of built-in validators and errors messages. Er
       **/
       validate(e, addErrors) {
 
-        this._resetFields();
-        this._clearEmptyValues();
+        this.__resetFields();
+        this.__clearEmptyValues();
 
         let errors = validate(this.data, this.constraints);
         let flatErrors = [];
@@ -244,6 +239,9 @@ The library includes a collection of built-in validators and errors messages. Er
 
         this.set('errors', flatErrors.filter(x => typeof x !== 'number'));
 
+        /**
+         * jQuery scollTop. Needs another option.
+         */
         if (this.errors.length) {
           $('html, body').animate({
             scrollTop: this.offsetTop
@@ -256,6 +254,17 @@ The library includes a collection of built-in validators and errors messages. Er
           }
         }
         return (this.errors.length) ? false : true;
+      }
+
+      ready() {
+        super.ready();
+        this.$.helper.addEventListener('submit', e => this.validate(e));
+        this.addEventListener('id-form-submit', e => this.validate(e));
+
+        this.$.xhr.addEventListener('response', this._handleFormResponse.bind(this));
+        this.$.xhr.addEventListener('error', this._handleFormError.bind(this));
+
+        this.__getFields();
       }
     }
 

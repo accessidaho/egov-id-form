@@ -65,7 +65,7 @@ The library includes a collection of built-in validators and errors messages. Er
           value: {
             type: String,
             value: '',
-            observer: '_updateValue',
+            observer: '__updateValue',
             notify: true
           },
           /**
@@ -82,7 +82,7 @@ The library includes a collection of built-in validators and errors messages. Er
             type: Boolean,
             value: false,
             reflectToAttribute: true,
-            observer: '_updateRepeatButton'
+            observer: '__updateRepeatButton'
           },
           /**
            * Add buttons text.
@@ -107,7 +107,7 @@ The library includes a collection of built-in validators and errors messages. Er
        * @param {object} field Node of the field to repeat
        * @param {index}  i     Used for the repeat button placement.
        */
-      _addField(field, i) {
+      __addField(field, i) {
         var newField = field.cloneNode(true);
 
         if (!this.repeatLabel && this.repeatIndex !== 0) {
@@ -121,9 +121,9 @@ The library includes a collection of built-in validators and errors messages. Er
         newField.setAttribute('repeat-button-text', this.repeatButtonText);
 
         let nameOrFalse = (this.repeats.length > 1) ? newField.name : false;
-        newField.bindValue = this._valuePath(newField);
-        newField.addEventListener('bind-value-changed', this._updateBindValue.bind(this));
-        newField.addEventListener('input-blur', this._blur.bind(this));
+        newField.bindValue = this.__valuePath(newField);
+        newField.addEventListener('bind-value-changed', this.__updateBindValue.bind(this));
+        newField.addEventListener('input-blur', this.__blur.bind(this));
 
         Polymer.dom(this.$.fields).appendChild(newField);
         return newField;
@@ -133,7 +133,7 @@ The library includes a collection of built-in validators and errors messages. Er
        * When the field blurs and the element is empty.
        * @return {null}
        */
-      _blur() {
+      __blur() {
         if (this.value === '') {
           this.dispatchEvent(new CustomEvent('clear-empty', {detail: {index: this.repeatIndex}}));
         }
@@ -144,9 +144,9 @@ The library includes a collection of built-in validators and errors messages. Er
        * @param  {object} e Event of the update
        * @return {null}
        */
-      _updateBindValue(e) {
+      __updateBindValue(e) {
         e.stopPropagation();
-        this._appended.forEach(field => {
+        this.__appended.forEach(field => {
           if (this.repeats.length > 1) {
             this.set('value.'+field.name, field.bindValue);
           } else {
@@ -161,9 +161,9 @@ The library includes a collection of built-in validators and errors messages. Er
        * Updates the value when passed from an external origin
        * @return {null}
        */
-      _updateValue() {
-        if (this._init) {
-          this._appended.forEach(field => {
+      __updateValue() {
+        if (this.__appended) {
+          this.__appended.forEach(field => {
             if (this.repeats.length > 1) {
               field.bindValue = this.value[field.name];
             } else {
@@ -177,10 +177,10 @@ The library includes a collection of built-in validators and errors messages. Er
        * Moves the repeat button to the final row.
        * @return {null}
        */
-      _updateRepeatButton() {
-        if (this._appended) {
-          this._appended.forEach((field, i) => {
-            if (this.repeatLast && i === (this._appended.length-1)) {
+      __updateRepeatButton() {
+        if (this.__appended) {
+          this.__appended.forEach((field, i) => {
+            if (this.repeatLast && i === (this.__appended.length-1)) {
               field.setAttribute('repeat-button', '');
             } else {
               field.removeAttribute('repeat-button');
@@ -194,23 +194,13 @@ The library includes a collection of built-in validators and errors messages. Er
        * @param  {object} field field object
        * @return {mixed}        field value.
        */
-      _valuePath(field) {
+      __valuePath(field) {
         return (this.repeats.length > 1) ? this.value[field.name] : this.value;
       }
 
       ready() {
         super.ready();
-
-        this._appended = [];
-
-        if (!this._init) {
-          this.repeats.forEach((field, i) => {
-            this._appended.push(this._addField(field, i));
-          });
-        }
-
-
-        this._init = true;
+        this.__appended = this.repeats.map((field, i) => this.__addField(field, i));
       }
     }
 

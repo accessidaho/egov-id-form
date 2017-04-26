@@ -21,7 +21,7 @@
         }
 
         /**
-         * This is to get around validate.js stripping non unique values.
+         * This is to get around validate.js stripping same values.
          */
         return (validation || i+1);
       });
