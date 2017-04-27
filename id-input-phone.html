@@ -16,6 +16,12 @@
     <style include="id-form-flags"></style>
     <style include="id-form-styles">
 
+      :host:after {
+        content: "";
+        display: table;
+        clear: both;
+      }
+
       @media (min-width: 768px) {
         :host(.lg) .input-wrap {
           width: 80%;
@@ -32,6 +38,10 @@
         :host(.xs) .input-wrap {
           width: 15%;
         }
+      }
+
+      .input-wrap {
+        width: 100%;
       }
 
       input, .input-group-button.country-code {
