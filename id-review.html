@@ -14,6 +14,14 @@
       #fieldControl {
         padding-top: 7px;
       }
+
+      input, textarea {
+        border: 0;
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+      }
     </style>
 
     <template is="dom-if" if="[[label]]">
@@ -34,7 +42,7 @@
           **/
           bindValue: {
             type: String,
-            observer: '_bindValueChanged'
+            observer: '__updateValue'
           },
           /**
            * The label for this input.
@@ -50,15 +58,15 @@
           /**
            * The masking for the input. <i>For more information, see the [Inputmask 3.x](https://github.com/RobinHerbots/Inputmask) documentation.</i>
           **/
-          mask: String,
+          mask: Object,
         };
       }
 
       /**
-       * Updatings the bound value. Applies options.
+       * Update the bound value. Applies options.
        * @return null
        */
-      _bindValueChanged() {
+      __updateValue() {
 
         // Replace boolean with boolText index.
         if (typeof(this.bindValue) === "boolean") {
@@ -69,6 +77,17 @@
         // Set for null values.
         if (this.bindValue === null) {
           this.bindValue = this.boolText[0];
+        }
+
+        if (this.mask) {
+          Polymer.dom(this.$.fieldControl).innerHTML = '';
+
+          let maskedInputNode = document.createElement('input');
+          maskedInputNode.setAttribute('id', 'input');
+          this.$.fieldControl.appendChild(maskedInputNode);
+          maskedInputNode.value = this.bindValue;
+
+          new Cleave(maskedInputNode, this.mask);
         }
 
       }

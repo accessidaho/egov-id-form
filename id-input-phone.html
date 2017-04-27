@@ -34,7 +34,7 @@
         }
       }
 
-      input {
+      input, .input-group-button.country-code {
         font-size: 100%;
         display: block;
         width: 100%;
@@ -52,6 +52,18 @@
         -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
         transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
         transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        border-left: 0;
+        padding-left: 0;
+        order: 3;
+      }
+
+      .input-group-button.country-code {
+        border-right: 0;
+        border-radius: 0;
+        width: auto;
+        padding-right: .3rem;
+        padding-left: .5rem;
+        order: 2;
       }
 
       input:focus {
@@ -59,6 +71,10 @@
         background-color: #fff;
         border-color: #5cb3fd;
         outline: 0;
+      }
+
+      input:focus + .country-code {
+        border-color: #5cb3fd;
       }
 
       :host([repeat-button]) .input-wrap {
@@ -118,6 +134,7 @@
         position: relative;
         font-size: 0;
         white-space: nowrap;
+        order: 1;
       }
       .input-group-btn {
         white-space: nowrap;
@@ -152,6 +169,9 @@
         margin-left: .5rem;
       }
 
+      .flag-icon {
+        margin-right: .5rem;
+      }
 
     </style>
     <template is="dom-if" if="[[label]]">
@@ -171,6 +191,7 @@
             </id-button>
           </span>
           <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]" hidden="[[mask]]">
+          <span class="input-group-button country-code">+[[selectedCountry.2]]</span>
         </div>
         <iron-dropdown
           horizontal-align="left"
@@ -227,17 +248,22 @@
       __maskedInput() {
         let maskedInputNode = document.createElement('input');
         maskedInputNode.setAttribute('id', 'maskedInput');
-        this.$.fieldControl.getElementsByClassName('input-group')[0].appendChild(maskedInputNode);
+        this.$.input.parentNode.insertBefore(maskedInputNode, this.$.input.nextSibling);
         maskedInputNode.addEventListener('input', e => this.__updateValue(e));
 
         return maskedInputNode;
       }
 
       __updateValue(e) {
+        let _number = this.__cleave.getRawValue();
+        if (_number.substring(0, this.selectedCountry[2].length) == this.selectedCountry[2] && _number.length > 5) {
+          _number = _number.substring(this.selectedCountry[2].length, _number.length);
+        }
+
         this.set('bindValue', {
           region: this.selectedCountry[2],
-          number: this.__cleave.getRawValue(),
-          country: this.selectedCountry[0]
+          number: _number,
+          country: this.selectedCountry[1]
         });
       }
 
@@ -249,7 +275,7 @@
 
       ready() {
         if ( (typeof this.bindValue === "object") && (this.bindValue !== null) ) {
-          this.selectedCountry = this.countryList.find(x => x[0] === this.bindValue.country);
+          this.selectedCountry = this.countryList.find(x => x[1] === this.bindValue.country);
         } else {
           this.selectedCountry = this.countryList.find(x => x[1] === this.countries[0]);
         }
