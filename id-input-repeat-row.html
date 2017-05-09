@@ -118,6 +118,13 @@ The library includes a collection of built-in validators and errors messages. Er
           newField.setAttribute('repeat-button', '');
         }
 
+        /**
+         * This is to move over a not standard prop.
+         */
+        if (field.mask) {
+          newField.mask = field.mask;
+        }
+
         newField.setAttribute('repeat-button-text', this.repeatButtonText);
 
         let nameOrFalse = (this.repeats.length > 1) ? newField.name : false;

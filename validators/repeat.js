@@ -13,10 +13,11 @@
 
       return values.map((v, i) => {
         if (v === '') v = null;
+        console.log(v, options);
         let validation = validate.single(v, options);
         if (validation) {
           validation = validation.map(a => {
-            return validate.capitalize(validate.prettify(key) + ' ' + a);
+            return validate.capitalize(a);
           })
         }
 

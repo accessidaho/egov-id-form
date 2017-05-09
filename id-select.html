@@ -65,8 +65,9 @@
     </template>
     <div id="fieldControl">
       <select name$="[[name]]" on-change="__select">
+        <option value="" selected="{{__selected('', bindValue)}}">[[defaultOption]]</option>
         <template is="dom-repeat" items="{{choices}}">
-            <option value$="[[item]]" selected="{{__selected(item, bindValue)}}">[[item]]</option>
+          <option value$="[[item]]" selected="{{__selected(item, bindValue)}}">[[item]]</option>
         </template>
       </select>
     </div>
@@ -80,7 +81,14 @@
           /**
            * List of possible values for the radios.
           **/
-          choices: Array
+          choices: Array,
+          /**
+           * Default placeholder text.
+          **/
+          defaultOption: {
+            type: String,
+            value: 'Please select an option.'
+          }
         };
       }
 
@@ -116,9 +124,6 @@
 
       ready() {
         super.ready();
-        if (!this.bindValue) {
-          this.bindValue = this.choices[0];
-        }
       }
     }
 

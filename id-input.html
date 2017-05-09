@@ -73,7 +73,7 @@
     </template>
     <div id="fieldControl">
       <template is="dom-if" if="[[!required]]"><span class="optional">(Optional)</span></template><template is="dom-if" if="{{hint}}"><span class="hint">[[hint]]</span></template>
-      <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]" hidden="[[mask]]">
+      <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]" hidden="[[mask]]" placeholder$="[[placeholder]]">
     </div>
   </template>
 
@@ -92,6 +92,13 @@
           mask: {
             type: Object,
             value: false
+          },
+          /**
+           * The masking for the input. <i>For more information, see the [Cleave.js](https://nosir.github.io/cleave.js/) documentation.</i>
+          **/
+          placeholder: {
+            type: String,
+            value: ''
           },
           /**
            * The value for this input.
@@ -120,6 +127,8 @@
         maskedInputNode.setAttribute('id', 'maskedInput');
         Polymer.dom(this.$.fieldControl).appendChild(maskedInputNode);
         maskedInputNode.addEventListener('input', e => this.__updateValue(e));
+        maskedInputNode.addEventListener('focus', e => this.__focusValue(e));
+        maskedInputNode.addEventListener('blur', e => this.__blurValue(e));
 
         return maskedInputNode;
       }
@@ -127,10 +136,33 @@
       /**
        * Sets the initial cleave value.
        */
-      __setCleaveValue() {
+      __setCleaveValue(e) {
         if (this.__cleave) {
-          this.__cleave.setRawValue(this.bindValue || '');
+
+          let value = this.bindValue;
+
+          if (e && document.activeElement !== e.target) {
+            value = (this.bindValue && this.bindValue !== '') ? this.bindValue : this.placeholder;
+          }
+
+          this.__cleave.setRawValue(value);
         }
+
+
+      }
+
+      __focusValue() {
+          if (this.__cleave.getRawValue() === this.placeholder) {
+            this.__cleave.setRawValue('');
+          }
+      }
+
+      __blurValue() {
+        if (this.__cleave.getRawValue() === '') {
+          this.__cleave.setRawValue(this.placeholder);
+        }
+
+        this.dispatchEvent(new CustomEvent('input-blur'));
       }
 
       ready() {
@@ -145,7 +177,7 @@
         if (this.mask) {
           let maskedInput = this.__maskedInput();
           this.__cleave = new Cleave(maskedInput, this.mask);
-          this.__setCleaveValue();
+          this.__setCleaveValue({});
         }
       }
     }
