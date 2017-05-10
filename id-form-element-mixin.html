@@ -56,6 +56,18 @@
       };
     }
 
+    static get observers() {
+      return [
+        'bindValueChanged(bindValue)'
+      ]
+    }
+
+    bindValueChanged() {
+      if (this.invalid) {
+        this.set('invalid', false);
+      }
+    }
+
     /**
      * Sets the invalid boolean for styling.
      * @param  {boolean} valid Is the input valid or not.
