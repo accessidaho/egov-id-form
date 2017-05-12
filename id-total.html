@@ -1,0 +1,99 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="./id-form-styles.html">
+
+<!--
+`id-review` Readonly form field for use building reviews.
+
+@demo demo/index.html
+-->
+
+<dom-module id="id-total">
+  <template>
+    <style include="id-form-styles">
+      #fieldControl {
+        padding-top: 7px;
+      }
+
+      input, textarea {
+        border: 0;
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+      }
+
+      button {
+        padding: 0;
+        cursor: pointer;
+        background: 0 0;
+        border: 0;
+        -webkit-appearance: none;
+        font-size: .9rem;
+        color: var(--id-link-color, #0027c1);
+      }
+
+      button:hover {
+        color: var(--id-link-hover-color, #001875);
+      }
+    </style>
+
+    <label id="fieldLabel">
+      <p>Subtotal</p>
+      <p>Fee</p>
+      <p>Price</p>
+    </label>
+    <div id="fieldControl">
+      <p>$[[__toFixed(bindValue)]]</p>
+      <p>$[[__toFixed(fee)]]</p>
+      <p>About the <button on-tap="__openPricing">Idaho.gov price.</button></p>
+      <p>$[[__toFixed(amount)]]</p>
+    </div>
+    <id-overlay id="pricing" tabindex=-1 with-backdrop title="Idaho.gov price">
+      [[pricingtext]]
+    </id-overlay>
+  </template>
+
+  <script>
+    class IdTotal extends Polymer.Element {
+      static get is() { return 'id-total'; }
+      static get properties() {
+        return {
+          /**
+           * The value for this input.
+          **/
+          bindValue: {
+            type: Number,
+            observer: '__updateValue'
+          },
+          percentage: {
+            type: Number,
+            value: 0
+          },
+          fixed: {
+            type: Number,
+            value: 0
+          }
+        };
+      }
+
+      __toFixed(numeral) {
+        return Number(numeral).toFixed(2);
+      }
+
+      __openPricing() {
+        window.open('https://www.idaho.gov/pricing','page','toolbar=0,scrollbars=1,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=220,top='+(screen.height/2-250)+',left='+(screen.width/2-110)+'titlebar=no');
+      }
+
+      /**
+       * Update the bound value. Applies options.
+       * @return null
+       */
+      __updateValue() {
+        this.fee = ((this.bindValue * (this.percentage / 100)) + this.fixed);
+        this.amount = Number(this.bindValue) + this.fee;
+      }
+    }
+
+    window.customElements.define(IdTotal.is, IdTotal);
+  </script>
+</dom-module>
