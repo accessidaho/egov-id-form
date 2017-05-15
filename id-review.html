@@ -76,9 +76,9 @@
         }
 
         if (this.choices) {
-          let value = this.choices.find(x => x.value = this.bindValue).label;
-          if (value) {
-            this.bindValue = value;
+          let value = this.choices.find(x => x.value = this.bindValue);
+          if (value && value.label) {
+            this.bindValue = value.label;
           }
         }
 
