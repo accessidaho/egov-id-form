@@ -77,7 +77,7 @@
       }
 
       __toFixed(numeral) {
-        return Number(numeral).toFixed(2);
+        return Number(numeral).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       }
 
       __openPricing() {

@@ -73,7 +73,7 @@
     </template>
     <div id="fieldControl">
       <template is="dom-if" if="[[!required]]"><span class="optional">(Optional)</span></template><template is="dom-if" if="{{hint}}"><span class="hint">[[hint]]</span></template>
-      <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]" hidden="[[mask]]" placeholder$="[[placeholder]]">
+      <input value="{{bindValue::input}}" id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]" hidden="[[__hiddenMask(commonMask, mask)]]" placeholder$="[[placeholder]]">
     </div>
   </template>
 
@@ -89,10 +89,11 @@
           /**
            * The masking for the input. <i>For more information, see the [Cleave.js](https://nosir.github.io/cleave.js/) documentation.</i>
           **/
-          mask: {
-            type: Object,
-            value: false
-          },
+          mask: Object,
+          /**
+           * Use a preconfigured commonly used mask.
+          **/
+          commonMask: String,
           /**
            * The masking for the input. <i>For more information, see the [Cleave.js](https://nosir.github.io/cleave.js/) documentation.</i>
           **/
@@ -112,6 +113,11 @@
         };
       }
 
+      __hiddenMask(c, m) {
+        return (c || m);
+      }
+
+
       /**
        * Update bindValue with cleave value.
        */
@@ -125,10 +131,21 @@
       __maskedInput() {
         let maskedInputNode = document.createElement('input');
         maskedInputNode.setAttribute('id', 'maskedInput');
+        maskedInputNode.setAttribute('type', this.type);
         Polymer.dom(this.$.fieldControl).appendChild(maskedInputNode);
         maskedInputNode.addEventListener('input', e => this.__updateValue(e));
         maskedInputNode.addEventListener('focus', e => this.__focusValue(e));
         maskedInputNode.addEventListener('blur', e => this.__blurValue(e));
+
+        if (this.type === 'number' || this.type === 'tel') {
+          maskedInputNode.addEventListener('keypress', e => {
+            if (e.charCode === 0 || /\d/.test(String.fromCharCode(e.charCode))) {
+              return true;
+            }
+
+            e.preventDefault();
+          });
+        }
 
         return maskedInputNode;
       }
@@ -174,9 +191,15 @@
           this.dispatchEvent(new CustomEvent('input-blur'));
         });
 
-        if (this.mask) {
+        if (this.mask || this.commonMask) {
           let maskedInput = this.__maskedInput();
-          this.__cleave = new Cleave(maskedInput, this.mask);
+
+          if (this.commonMask) {
+            this.__cleave = new Cleave(maskedInput, this._commonMasks(this.commonMask));
+          } else {
+            this.__cleave = new Cleave(maskedInput, this.mask);
+          }
+
           this.__setCleaveValue({});
         }
       }

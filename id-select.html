@@ -67,7 +67,7 @@
       <select name$="[[name]]" on-change="__select">
         <option value="" selected="{{__selected('', bindValue)}}">[[defaultOption]]</option>
         <template is="dom-repeat" items="{{choices}}">
-          <option value$="[[item]]" selected="{{__selected(item, bindValue)}}">[[item]]</option>
+          <option value$="[[__optionValue(item)]]" selected="{{__selected(item, bindValue)}}">[[__optionLabel(item)]]</option>
         </template>
       </select>
     </div>
@@ -92,6 +92,14 @@
         };
       }
 
+      __optionValue(item) {
+        return (item instanceof String) ? item : item.value;
+      }
+
+      __optionLabel(item) {
+        return (item instanceof String) ? item : item.label;
+      }
+
       /**
        * Determines if the radio is selected.
        * @param  {string} item      Value of item to check.
@@ -99,7 +107,7 @@
        * @return boolean            Is selected.
        */
       __selected(item, bindValue) {
-        return (item === bindValue);
+        return (item instanceof String) ? item === bindValue : item.value === bindValue;
       }
 
       /**

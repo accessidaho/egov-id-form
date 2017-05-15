@@ -62,6 +62,23 @@
       ]
     }
 
+    _commonMasks(mask) {
+      let _common = {
+        money: {
+          numeral: true,
+          prefix: '$',
+          rawValueTrimPrefix: true
+        },
+        phone: {
+          delimiter: '-',
+          blocks: [3, 3, 4],
+          rawValueTrimPrefix: true
+        }
+      }
+
+      return _common[mask];
+    }
+
     bindValueChanged() {
       if (this.invalid) {
         this.set('invalid', false);

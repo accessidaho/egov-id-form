@@ -1,6 +1,7 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="id-form-styles.html">
 <link rel="import" href="./dependencies.html">
+<link rel="import" href="./id-form-element-mixin.html">
 
 <!--
 `id-review` Readonly form field for use building reviews.
@@ -33,24 +34,14 @@
   </template>
 
   <script>
-    class IdReview extends Polymer.Element {
+    class IdReview extends IdFormElementMixin(Polymer.Element) {
       static get is() { return 'id-review'; }
       static get properties() {
         return {
-          /**
-           * The value for this input.
-          **/
           bindValue: {
             type: String,
             observer: '__updateValue'
           },
-          /**
-           * The label for this input.
-          **/
-          label: String,
-          /**
-           * The name for this input.
-          **/
           boolText: {
             type: Array,
             value: ['Not checked', 'Checked']
@@ -59,6 +50,11 @@
            * The masking for the input. <i>For more information, see the [Inputmask 3.x](https://github.com/RobinHerbots/Inputmask) documentation.</i>
           **/
           mask: Object,
+          commonMask: String,
+          /**
+           * If the value is an ID or key of value.
+          **/
+          choices: Array,
         };
       }
 
@@ -79,18 +75,32 @@
           this.bindValue = this.boolText[0];
         }
 
-        if (this.mask) {
-          Polymer.dom(this.$.fieldControl).innerHTML = '';
-
-          let maskedInputNode = document.createElement('input');
-          maskedInputNode.setAttribute('id', 'input');
-          maskedInputNode.className = 'id-review style-scope';
-          this.$.fieldControl.appendChild(maskedInputNode);
-          maskedInputNode.value = this.bindValue;
-
-          new Cleave(maskedInputNode, this.mask);
+        if (this.choices) {
+          let value = this.choices.find(x => x.value = this.bindValue).label;
+          if (value) {
+            this.bindValue = value;
+          }
         }
 
+        if (this.__cleave) {
+          this.__cleave.setRawValue(this.bindValue);
+        } else {
+          if (this.mask || this.commonMask) {
+            Polymer.dom(this.$.fieldControl).innerHTML = '';
+
+            let maskedInputNode = document.createElement('input');
+            maskedInputNode.setAttribute('readonly', 'readonly');
+            maskedInputNode.className = 'id-review style-scope';
+            this.$.fieldControl.appendChild(maskedInputNode);
+            maskedInputNode.value = this.bindValue;
+
+            if (this.commonMask) {
+              this.__cleave = new Cleave(maskedInputNode, this._commonMasks(this.commonMask));
+            } else {
+              this.__cleave = new Cleave(maskedInputNode, this.mask);
+            }
+          }
+        }
       }
     }
 
