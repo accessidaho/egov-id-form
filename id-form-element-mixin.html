@@ -134,7 +134,9 @@
      */
     connectedCallback() {
       super.connectedCallback();
-      this._repeatButtonNode = this.__addRepeatButton();
+      if (this.repeatButton) {
+        this._repeatButtonNode = this.__addRepeatButton();
+      }
       this.__addEnterEvent();
     }
   };

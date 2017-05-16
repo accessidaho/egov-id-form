@@ -132,7 +132,7 @@ The library includes a collection of built-in validators and errors messages. Er
         newField.addEventListener('bind-value-changed', this.__updateBindValue.bind(this));
         newField.addEventListener('input-blur', this.__blur.bind(this));
 
-        Polymer.dom(this.$.fields).appendChild(newField);
+        this.$.fields.appendChild(newField);
         return newField;
       }
 
