@@ -92,6 +92,19 @@
         };
       }
 
+      bindValueChanged() {
+        if (this.invalid) {
+          this.set('invalid', false);
+        }
+
+        if (this.choices) {
+          let selectedIndex = this.choices.findIndex(item => (item && !(item instanceof String)) ? item.value === this.bindValue : item === this.bindValue);
+          this.$.select.selectedIndex = selectedIndex;
+        }
+
+
+      }
+
       __optionValue(item) {
         return (item && !(item instanceof String)) ? item.value : item;
       }
