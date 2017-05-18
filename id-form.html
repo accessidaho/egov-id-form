@@ -104,7 +104,10 @@ The library includes a collection of built-in validators and errors messages. Er
            * The constraints used to validate the data. <i>For more information, see the [validate.js](https://validatejs.org) documentation.</i>
           **/
           constraints: Object,
-          token: Boolean
+          tokenSync: {
+            type: Boolean,
+            default: false
+          }
         };
       }
 
@@ -222,10 +225,10 @@ The library includes a collection of built-in validators and errors messages. Er
         if (this.tokenSync) {
           let tokenSync = this.$.tokenSync;
 
-          xhr.contentType = this.contentType;
-          xhr.handleAs = this.handleAs;
-          xhr.url = this.action;
-          xhr.method = 'GET';
+          tokenSync.contentType = this.contentType;
+          tokenSync.handleAs = this.handleAs;
+          tokenSync.url = this.action;
+          tokenSync.method = 'GET';
 
           return this.$.tokenSync.generateRequest();
         }
