@@ -51,6 +51,7 @@ The library includes a collection of built-in validators and errors messages. Er
     </form>
 
     <iron-ajax id="xhr"></iron-ajax>
+    <iron-ajax id="tokenSync"></iron-ajax>
   </template>
 
   <script>
@@ -102,7 +103,8 @@ The library includes a collection of built-in validators and errors messages. Er
           /**
            * The constraints used to validate the data. <i>For more information, see the [validate.js](https://validatejs.org) documentation.</i>
           **/
-          constraints: Object
+          constraints: Object,
+          token: Boolean
         };
       }
 
@@ -118,6 +120,20 @@ The library includes a collection of built-in validators and errors messages. Er
        */
       _handleFormResponse(e) {
         this.dispatchEvent(new CustomEvent('id-form-response', e));
+      }
+
+      /**
+       * Handles response from iron-ajax success
+       */
+      _handleTokenError(e) {
+        this.dispatchEvent(new CustomEvent('id-form-error', e));
+      }
+
+      /**
+       * Handles response from iron-ajax error
+       */
+      _handleTokenResponse(e) {
+        console.log(e.detail.response);
       }
 
       /**
@@ -177,14 +193,7 @@ The library includes a collection of built-in validators and errors messages. Er
         });
       }
 
-      /**
-       * Submits the form through iron-ajax. This function should be called after
-       * you validate the form through the validate method.
-       *
-       * @return {boolean}
-      **/
-      submit(data) {
-
+      generatePostRequest(data) {
         let xhr = this.$.xhr;
 
         xhr.contentType = this.contentType;
@@ -200,6 +209,28 @@ The library includes a collection of built-in validators and errors messages. Er
         this.$.xhr.generateRequest();
 
         return true;
+      }
+
+      /**
+       * Submits the form through iron-ajax. This function should be called after
+       * you validate the form through the validate method.
+       *
+       * @return {boolean}
+      **/
+      submit(data) {
+
+        if (this.tokenSync) {
+          let tokenSync = this.$.tokenSync;
+
+          xhr.contentType = this.contentType;
+          xhr.handleAs = this.handleAs;
+          xhr.url = this.action;
+          xhr.method = 'GET';
+
+          return this.$.tokenSync.generateRequest();
+        }
+
+        return this.generatePostRequest(data);
       }
 
       /**
@@ -263,6 +294,9 @@ The library includes a collection of built-in validators and errors messages. Er
 
         this.$.xhr.addEventListener('response', this._handleFormResponse.bind(this));
         this.$.xhr.addEventListener('error', this._handleFormError.bind(this));
+
+        this.$.tokenSync.addEventListener('response', this._handleTokenResponse.bind(this));
+        this.$.tokenSync.addEventListener('error', this._handleTokenError.bind(this));
 
         this.__getFields();
       }
