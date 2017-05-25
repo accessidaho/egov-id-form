@@ -305,7 +305,7 @@ The library includes a collection of built-in validators and errors messages. Er
           tokenSync.handleAs = this.handleAs;
           tokenSync.url = this.action;
           tokenSync.method = 'GET';
-          tokenSync.params = {SYNCHRONIZER_URI: this.action};
+          tokenSync.params = {SYNCHRONIZER_URI: this.action, SYNCHRONIZER_TOKEN: ''};
 
           return this.$.tokenSync.generateRequest();
         }
