@@ -224,8 +224,8 @@ The library includes a collection of built-in validators and errors messages. Er
       **/
       submit(data) {
         if (this.tokenSync) {
-          data.SYNCHRONIZER_TOKEN = this.syncToken;
-          data.SYNCHRONIZER_URI = this.action;
+          this.data.SYNCHRONIZER_TOKEN = this.syncToken;
+          this.data.SYNCHRONIZER_URI = this.action;
         }
 
         return this.generatePostRequest(data);
