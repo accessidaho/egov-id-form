@@ -122,6 +122,7 @@ The library includes a collection of built-in validators and errors messages. Er
        * Handles response from iron-ajax error
        */
       _handleFormResponse(e) {
+        this.set('syncToken', e.detail.response.newToken);
         this.dispatchEvent(new CustomEvent('id-form-response', e));
       }
 
@@ -136,7 +137,8 @@ The library includes a collection of built-in validators and errors messages. Er
        * Handles response from iron-ajax error
        */
       _handleTokenResponse(e) {
-        console.log(e.detail.response);
+        let response = e.detail.response;
+        this.set('syncToken', response.newToken);
       }
 
       /**
@@ -221,16 +223,9 @@ The library includes a collection of built-in validators and errors messages. Er
        * @return {boolean}
       **/
       submit(data) {
-
         if (this.tokenSync) {
-          let tokenSync = this.$.tokenSync;
-
-          tokenSync.contentType = this.contentType;
-          tokenSync.handleAs = this.handleAs;
-          tokenSync.url = this.action;
-          tokenSync.method = 'GET';
-
-          return this.$.tokenSync.generateRequest();
+          data.SYNCHRONIZER_TOKEN = this.syncToken;
+          data.SYNCHRONIZER_URI = this.action;
         }
 
         return this.generatePostRequest(data);
@@ -302,6 +297,17 @@ The library includes a collection of built-in validators and errors messages. Er
         this.$.tokenSync.addEventListener('error', this._handleTokenError.bind(this));
 
         this.__getFields();
+
+        if (this.tokenSync) {
+          let tokenSync = this.$.tokenSync;
+
+          tokenSync.contentType = this.contentType;
+          tokenSync.handleAs = this.handleAs;
+          tokenSync.url = this.action;
+          tokenSync.method = 'GET';
+
+          return this.$.tokenSync.generateRequest();
+        }
       }
     }
 
