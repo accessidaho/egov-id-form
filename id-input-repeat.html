@@ -52,6 +52,7 @@ The library includes a collection of built-in validators and errors messages. Er
           repeat-index="[[index]]"
           repeat-button-text="[[repeatButtonText]]"
           repeat-last="[[__isLastIndex(index, bindValue.length)]]"
+          repeat-limit="[[repeatLimit]]"
           invalid="[[__isValid(index, invalid)]]"
           on-add-repeat="addRow"
           on-clear-empty="__clearEmpty">
@@ -92,6 +93,10 @@ The library includes a collection of built-in validators and errors messages. Er
           repeatButtonText: {
             type: String,
             value: 'Add'
+          },
+          repeatLimit: {
+            type: Number,
+            default: 0
           },
           /**
            * Invalid array for highlighting rows.
@@ -149,6 +154,10 @@ The library includes a collection of built-in validators and errors messages. Er
         }
 
         if (this.bindValue[this.bindValue.length -1] === '') {
+          return;
+        }
+
+        if (this.repeatLimit && this.bindValue.length >= this.repeatLimit) {
           return;
         }
 

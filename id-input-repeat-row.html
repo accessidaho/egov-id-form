@@ -92,6 +92,13 @@ The library includes a collection of built-in validators and errors messages. Er
             value: 'Add'
           },
           /**
+           * Limit the repeat
+           */
+          repeatLimit: {
+            type: Number,
+            value: 0
+          },
+          /**
            * Determines whether to apply the invalid style.
           **/
           invalid: {
@@ -114,7 +121,7 @@ The library includes a collection of built-in validators and errors messages. Er
           newField.label = ' ';
         }
 
-        if (this.repeatLast && i === (this.repeats.length-1)) {
+        if (this.repeatLast && i === (this.repeats.length-1) && (this.repeatLimit && (this.repeatIndex+1) !== this.repeatLimit)) {
           newField.setAttribute('repeat-button', '');
         }
 
