@@ -172,12 +172,16 @@
           if (this.__cleave.getRawValue() === this.placeholder) {
             this.__cleave.setRawValue('');
           }
+
+          this.__updateValue();
       }
 
       __blurValue() {
         if (this.__cleave.getRawValue() === '') {
           this.__cleave.setRawValue(this.placeholder);
         }
+
+        this.__updateValue();
 
         this.dispatchEvent(new CustomEvent('input-blur'));
       }
