@@ -10,7 +10,8 @@
     "id-alert": "https://github.com/accessidaho/egov-id-alert.git",
     "id-button": "https://github.com/accessidaho/egov-id-button.git",
     "iron-dropdown": "2.0-preview",
-    "cleave.js": "^0.7.10"
+    "cleave.js": "^0.7.10",
+    "pikaday": "^1.6.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#2.0-preview",

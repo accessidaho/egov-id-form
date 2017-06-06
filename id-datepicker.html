@@ -1,0 +1,516 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="./id-form-styles.html">
+<link rel="import" href="./id-form-element-mixin.html">
+<link rel="import" href="../id-button/id-button.html">
+
+<!--
+`id-input` is a single-line text field with Idaho styling.
+
+@demo demo/index.html
+-->
+
+<dom-module id="id-datepicker">
+  <template>
+    <style include="id-form-styles">
+
+      @media (min-width: 768px) {
+        :host(.lg) input {
+          width: 80%;
+        }
+
+        :host(.lg) .calendarIcon {
+          left: 80%;
+        }
+
+        :host(.md) input {
+          width: 50%;
+        }
+
+        :host(.md) .calendarIcon {
+          left: 50%;
+        }
+
+        :host(.sm) input {
+          width: 25%;
+        }
+
+        :host(.sm) .calendarIcon {
+          left: 25%;
+        }
+
+        :host(.xs) input {
+          width: 15%;
+        }
+
+        :host(.xs) .calendarIcon {
+          left: 15%;
+        }
+      }
+
+      :host(.numeral) input {
+        text-align: right;
+      }
+
+      input {
+        font-size: 100%;
+        display: block;
+        width: 100%;
+        padding: .5rem .75rem;
+        line-height: 1.25;
+        color: #464a4c;
+        background-color: #fff;
+        background-image: none;
+        -webkit-background-clip: padding-box;
+        background-clip: padding-box;
+        border: 1px solid rgba(0,0,0,.15);
+        border-radius: .25rem;
+        -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+        -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+        transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+      }
+
+      input:focus {
+        color: #464a4c;
+        background-color: #fff;
+        border-color: #5cb3fd;
+        outline: 0;
+      }
+
+      :host([repeat-button]) input {
+        float: left;
+        margin-right: 1rem;
+      }
+
+      #fieldControl, #fieldControlEnd {
+        position: relative;
+        width: 100%;
+      }
+
+      #fieldControl {
+        margin-bottom: 1rem;
+      }
+
+      #fieldControlEnd {
+        padding: 0 15px;
+      }
+
+      .calendarIcon {
+        position: absolute;
+        right: 15px;
+        transform: translate(-1.5rem);
+        height: 100%;
+      }
+
+      .calendarIcon:after {
+        content: "\f073";
+        position: absolute;
+        top: 11px;
+        left: 0;
+        display: block;
+        font: normal normal normal 14px/1 FontAwesome;
+        color: inherit;
+        opacity: .75;
+      }
+
+      .pika-single {
+          z-index: 9999;
+          display: block;
+          position: absolute !important;
+          color: #333;
+          background: #fff;
+          border: 1px solid #ccc;
+          border-bottom-color: #bbb;
+      }
+
+      /*
+      clear child float (pika-lendar), using the famous micro clearfix hack
+      http://nicolasgallagher.com/micro-clearfix-hack/
+      */
+      .pika-single:before,
+      .pika-single:after {
+          content: " ";
+          display: table;
+      }
+      .pika-single:after { clear: both }
+      .pika-single { *zoom: 1 }
+
+      .pika-single.is-hidden {
+          display: none;
+      }
+
+      .pika-single.is-bound {
+          position: absolute;
+          box-shadow: 0 5px 15px -5px rgba(0,0,0,.5);
+      }
+
+      .pika-lendar {
+          float: left;
+          width: 240px;
+          margin: 8px;
+      }
+
+      .pika-title {
+          position: relative;
+          text-align: center;
+      }
+
+      .pika-label {
+          display: inline-block;
+          *display: inline;
+          position: relative;
+          z-index: 9999;
+          overflow: hidden;
+          margin: 0;
+          padding: 5px 3px;
+          font-size: 14px;
+          line-height: 20px;
+          font-weight: bold;
+          background-color: #fff;
+      }
+      .pika-title select {
+          cursor: pointer;
+          position: absolute;
+          z-index: 9998;
+          margin: 0;
+          left: 0;
+          top: 5px;
+          filter: alpha(opacity=0);
+          opacity: 0;
+      }
+
+      .pika-prev,
+      .pika-next {
+          display: block;
+          cursor: pointer;
+          position: relative;
+          outline: none;
+          border: 0;
+          padding: 0;
+          width: 20px;
+          height: 30px;
+          /* hide text using text-indent trick, using width value (it's enough) */
+          text-indent: 20px;
+          white-space: nowrap;
+          overflow: hidden;
+          background-color: transparent;
+          background-position: center center;
+          background-repeat: no-repeat;
+          background-size: 75% 75%;
+          opacity: .5;
+          *position: absolute;
+          *top: 0;
+      }
+
+      .pika-prev:hover,
+      .pika-next:hover {
+          opacity: 1;
+      }
+
+      .pika-prev,
+      .is-rtl .pika-next {
+          float: left;
+          background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAAUklEQVR42u3VMQoAIBADQf8Pgj+OD9hG2CtONJB2ymQkKe0HbwAP0xucDiQWARITIDEBEnMgMQ8S8+AqBIl6kKgHiXqQqAeJepBo/z38J/U0uAHlaBkBl9I4GwAAAABJRU5ErkJggg==');
+          *left: 0;
+      }
+
+      .pika-next,
+      .is-rtl .pika-prev {
+          float: right;
+          background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAYAAAAsEj5rAAAAU0lEQVR42u3VOwoAMAgE0dwfAnNjU26bYkBCFGwfiL9VVWoO+BJ4Gf3gtsEKKoFBNTCoCAYVwaAiGNQGMUHMkjGbgjk2mIONuXo0nC8XnCf1JXgArVIZAQh5TKYAAAAASUVORK5CYII=');
+          *right: 0;
+      }
+
+      .pika-prev.is-disabled,
+      .pika-next.is-disabled {
+          cursor: default;
+          opacity: .2;
+      }
+
+      .pika-select {
+          display: inline-block;
+          *display: inline;
+      }
+
+      .pika-table {
+          width: 100%;
+          border-collapse: collapse;
+          border-spacing: 0;
+          border: 0;
+      }
+
+      .pika-table th,
+      .pika-table td {
+          width: 14.285714285714286%;
+          padding: 0;
+      }
+
+      .pika-table th {
+          color: #999;
+          font-size: 12px;
+          line-height: 25px;
+          font-weight: bold;
+          text-align: center;
+      }
+
+      .pika-button {
+          cursor: pointer;
+          display: block;
+          box-sizing: border-box;
+          -moz-box-sizing: border-box;
+          outline: none;
+          border: 0;
+          margin: 0;
+          width: 100%;
+          padding: 5px;
+          color: #666;
+          font-size: 12px;
+          line-height: 15px;
+          text-align: right;
+          background: #f5f5f5;
+      }
+
+      .pika-week {
+          font-size: 11px;
+          color: #999;
+      }
+
+      .is-today .pika-button {
+          color: var(--id-primary, #255dab);
+          font-weight: bold;
+      }
+
+      .is-selected .pika-button,
+      .has-event .pika-button {
+          color: #fff;
+          font-weight: bold;
+          background: var(--id-primary, #255dab);
+          box-shadow: inset 0 1px 3px var(--id-primary-border, #255dab);
+          border-radius: 3px;
+      }
+
+      .has-event .pika-button {
+          background: #005da9;
+          box-shadow: inset 0 1px 3px #0076c9;
+      }
+
+      .is-disabled .pika-button,
+      .is-inrange .pika-button {
+          background: #D5E9F7;
+      }
+
+      .is-startrange .pika-button {
+          color: #fff;
+          background: #6CB31D;
+          box-shadow: none;
+          border-radius: 3px;
+      }
+
+      .is-endrange .pika-button {
+          color: #fff;
+          background: #33aaff;
+          box-shadow: none;
+          border-radius: 3px;
+      }
+
+      .is-disabled .pika-button,
+      .is-outside-current-month .pika-button {
+          pointer-events: none;
+          cursor: default;
+          color: #999;
+          opacity: .3;
+      }
+
+      .pika-button:hover,
+      .pika-row.pick-whole-week:hover .pika-button {
+          color: #fff;
+          background: #666;
+          box-shadow: none;
+          border-radius: 3px;
+      }
+
+      /* styling for abbr */
+      .pika-table abbr {
+          border-bottom: none;
+          cursor: help;
+      }
+
+      .date-wrap {
+        width: 100%;
+      }
+
+      @media (min-width: 768px) {
+
+        .date-wrap {
+          display: -webkit-box;
+          display: -webkit-flex;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-flex-wrap: wrap;
+          -ms-flex-wrap: wrap;
+          flex-wrap: wrap;
+        }
+
+        #fieldControlEnd {
+          -webkit-flex-basis: 0;
+          -ms-flex-preferred-size: 0;
+          flex-basis: 0;
+          -webkit-box-flex: 1;
+          -webkit-flex-grow: 1;
+          -ms-flex-positive: 1;
+          flex-grow: 1;
+          max-width: 100%;
+        }
+      }
+
+    </style>
+    <div class="date-wrap">
+      <template is="dom-if" if="[[label]]">
+        <label id="fieldLabel">[[label]]</label>
+      </template>
+      <div id="fieldControl">
+        <div class="calendarIcon"></div>
+        <input id="input" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]" placeholder$="[[placeholder]]">
+      </div>
+    </div>
+    <div class="date-wrap">
+      <template is="dom-if" if="[[range]]">
+        <label id="fieldLabel">[[endLabel]]</label>
+      </template>
+      <div id="fieldControlEnd" hidden="{{!range}}">
+        <div class="calendarIcon"></div>
+        <input id="inputEnd" name$="[[name]]" type$="[[type]]" aria-label$="[[label]]" placeholder$="[[placeholder]]">
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class IdDatePicker extends IdFormElementMixin(Polymer.Element) {
+      static get is() { return 'id-datepicker'; }
+      static get properties() {
+        return {
+          /**
+           * The type of the input. The supported types are text, number, email, tel and password.
+          **/
+          type: String,
+          /**
+           * The masking for the input. <i>For more information, see the [Cleave.js](https://nosir.github.io/cleave.js/) documentation.</i>
+          **/
+          placeholder: {
+            type: String,
+            value: ''
+          },
+          /**
+           * Gives the date picker two endpoints for start and end.
+          **/
+          range: {
+            type: Boolean,
+            value: false
+          },
+          /**
+           * The value for this input.
+          **/
+          bindValue: {
+            type: Object,
+            notify: true
+          },
+          endLabel: {
+            type: String,
+            value: 'End Date'
+          }
+        };
+      }
+
+      __hiddenMask(c, m) {
+        return (c || m);
+      }
+
+
+      /**
+       * Update bindValue with cleave value.
+       */
+      __updateValue(e) {
+        this.set('bindValue', this.__cleave.getRawValue());
+      }
+
+      __selectStart() {
+        if (this.range) {
+          let date = this.datePicker.getDate();
+          this.set('bindValue.start', date.setHours(0,0,0,0));
+          this.notifyPath('bindValue');
+          this.datePicker.setStartRange(date);
+          this.datePickerEnd.setStartRange(date);
+          this.datePickerEnd.setMinDate(date);
+        } else {
+          this.set('bindValue', this.datePicker.getDate());
+        }
+      }
+
+      __selectEnd() {
+        let date = this.datePickerEnd.getDate();
+        this.set('bindValue.end', date.setHours(23,59,59,59));
+        this.notifyPath('bindValue');
+        this.datePicker.setEndRange(date);
+        this.datePicker.setMaxDate(date);
+        this.datePickerEnd.setEndRange(date);
+        console.log(this.bindValue);
+      }
+
+      __DatePicker(input, callback) {
+
+        let options = {
+          field: input,
+          bound: false,
+          container: input.parentNode,
+          position: 'bottom left',
+          reposition: false,
+          onSelect: () => {
+            callback.bind(this)();
+            input.blur();
+          }
+        };
+
+        if (this.options) {
+          let options = Object.assign(options, this.options);
+        }
+
+        const datePicker = new Pikaday(options);
+
+        datePicker.hide();
+
+        input.addEventListener('blur', () => {
+          this.dispatchEvent(new CustomEvent('input-blur'));
+          datePicker.hide();
+        });
+
+        input.addEventListener('focus', () => {
+          datePicker.show();
+        })
+
+        return datePicker;
+      }
+
+      ready() {
+        super.ready();
+
+        /**
+         * Hack for Safari and browsers who don't support event bubbling on input fields.
+         */
+        this.datePicker = this.__DatePicker(this.$.input, this.__selectStart);
+
+        if (this.range) {
+          this.datePickerEnd = this.__DatePicker(this.$.inputEnd, this.__selectEnd);
+          this.datePicker.setDate(new Date(this.bindValue.start));
+          this.datePickerEnd.setDate(new Date(this.bindValue.end));
+
+        } else {
+          this.datePicker.setDate(this.bindValue);
+        }
+
+      }
+    }
+
+    window.customElements.define(IdDatePicker.is, IdDatePicker);
+  </script>
+</dom-module>
