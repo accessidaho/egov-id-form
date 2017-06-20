@@ -3,12 +3,6 @@
 <link rel="import" href="./dependencies.html">
 <link rel="import" href="./id-form-element-mixin.html">
 
-<!--
-`id-review` Readonly form field for use building reviews.
-
-@demo demo/index.html
--->
-
 <dom-module id="id-review">
   <template>
     <style include="id-form-styles">
@@ -34,26 +28,44 @@
   </template>
 
   <script>
+    /**
+     * `id-review`
+     * Review element allows you to display information for review pages.
+     *
+     * @customElement
+     * @polymer
+     * @appliesMixin IdFormElementMixin
+     * @demo demo/review.html
+     */
     class IdReview extends IdFormElementMixin(Polymer.Element) {
       static get is() { return 'id-review'; }
       static get properties() {
         return {
+          /**
+           * The value for this element.
+           */
           bindValue: {
             type: String,
             observer: '__updateValue'
           },
+          /**
+           * If the variable is boolean what to say.
+           */
           boolText: {
             type: Array,
             value: ['Not checked', 'Checked']
           },
           /**
            * The masking for the input. <i>For more information, see the [Inputmask 3.x](https://github.com/RobinHerbots/Inputmask) documentation.</i>
-          **/
+           */
           mask: Object,
+          /**
+           * Use a preconfigured commonly used mask.
+           */
           commonMask: String,
           /**
-           * If the value is an ID or key of value.
-          **/
+           * This can be either an array of strings or a key value pair of {label, value}
+           */
           choices: Array,
         };
       }

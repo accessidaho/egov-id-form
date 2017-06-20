@@ -1,29 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../id-button/id-button.html">
 
-<!--
-`id-form`
-Idaho Form element that can validate and submit any form elements that are bound to the data object.
-
-## Constraints
-Data is validated against constraints. The constraints object can specify one or more validation rules for a field.
-```js
-var constraints = {
-  email: {
-    presence: true,
-    email: true
-  },
-  password: {
-    presence: true
-  }
-}
-```
-The library includes a collection of built-in validators and errors messages. Error messages can be customized, and you can also define custom validators for validating single, or multiple fields. Constraints can also be specified for child objects.
-> <i>For more information, see the [Validate.js](https://validatejs.org/#constraints) documentation.</i>
-
-@demo demo/index.html
--->
-
 <dom-module id="id-input-repeat-row">
 
   <template>
@@ -48,6 +25,14 @@ The library includes a collection of built-in validators and errors messages. Er
   </template>
 
   <script>
+    /**
+     * `id-row-repeat`
+     * Idaho form input repeater row. This shouldn't be called directly.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/row-repeat.html
+     */
     class IdInputRepeatRow extends Polymer.MutableData(Polymer.Element) {
       static get is() { return 'id-input-repeat-row'; }
       static get properties() {

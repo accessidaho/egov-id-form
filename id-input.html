@@ -3,12 +3,6 @@
 <link rel="import" href="./id-form-element-mixin.html">
 <link rel="import" href="../id-button/id-button.html">
 
-<!--
-`id-input` is a single-line text field with Idaho styling.
-
-@demo demo/index.html
--->
-
 <dom-module id="id-input">
   <template>
     <style include="id-form-styles">
@@ -78,32 +72,41 @@
   </template>
 
   <script>
+    /**
+     * `id-input`
+     * Idaho styled input element.
+     *
+     * @customElement
+     * @polymer
+     * @appliesMixin IdFormElementMixin
+     * @demo demo/input.html
+     */
     class IdInput extends IdFormElementMixin(Polymer.Element) {
       static get is() { return 'id-input'; }
       static get properties() {
         return {
           /**
            * The type of the input. The supported types are text, number, email, tel and password.
-          **/
+           */
           type: String,
           /**
            * The masking for the input. <i>For more information, see the [Cleave.js](https://nosir.github.io/cleave.js/) documentation.</i>
-          **/
+           */
           mask: Object,
           /**
            * Use a preconfigured commonly used mask.
-          **/
+           */
           commonMask: String,
           /**
            * The masking for the input. <i>For more information, see the [Cleave.js](https://nosir.github.io/cleave.js/) documentation.</i>
-          **/
+           */
           placeholder: {
             type: String,
             value: ''
           },
           /**
            * The value for this input.
-          **/
+           */
           bindValue: {
             type: String,
             notify: true,

@@ -2,11 +2,6 @@
 <link rel="import" href="id-form-styles.html">
 <link rel="import" href="./id-form-element-mixin.html">
 <link rel="import" href="../id-button/id-button.html">
-<!--
-`id-input` is a single-line text field with Idaho styling.
-
-@demo demo/index.html
--->
 
 <dom-module id="id-textarea">
   <template>
@@ -79,15 +74,31 @@
   </template>
 
   <script>
+    /**
+     * `id-textarea`
+     * Idaho styled textarea element.
+     *
+     * @customElement
+     * @polymer
+     * @appliesMixin IdFormElementMixin
+     * @demo demo/textarea.html
+     */
     class IdTextarea extends IdFormElementMixin(Polymer.Element) {
       static get is() { return 'id-textarea'; }
 
       static get properties() {
         return {
+          /**
+           * Limit the number of characters in the textarea.
+           */
           limit: Number
         }
       }
 
+      /**
+       * Update the displayed limit value.
+       * @return null
+       */
       __updateLimit() {
         this.$.limit.innerHTML = (this.limit - this.$.input.value.length) + ' remaining';
       }

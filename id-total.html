@@ -1,12 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="./id-form-styles.html">
 
-<!--
-`id-review` Readonly form field for use building reviews.
-
-@demo demo/index.html
--->
-
 <dom-module id="id-total">
   <template>
     <style include="id-form-styles">
@@ -51,6 +45,14 @@
   </template>
 
   <script>
+    /**
+     * `id-total`
+     * Displays the total and fees associated with the transaction.
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/total.html
+     */
     class IdTotal extends Polymer.Element {
       static get is() { return 'id-total'; }
       static get properties() {

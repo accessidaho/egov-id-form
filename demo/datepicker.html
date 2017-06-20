@@ -4,21 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
 
-    <title>id-form demo</title>
+    <title>id-datepicker demo</title>
 
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
-    <link rel="import" href="../../polymer/lib/elements/dom-if.html">
-    <link rel="import" href="../../id-button/id-button.html">
-    <link rel="import" href="../../id-alert/id-alert.html">
     <link rel="import" href="../id-form.html">
-    <link rel="import" href="../id-input.html">
+    <link rel="import" href="../id-datepicker.html">
     <link href="../bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Merriweather:400,400i,700,700i|Lato:400,700,400italic" rel="stylesheet" type="text/css">
-    <script src="../../jquery/dist/jquery.min.js"></script>
 
 
     <custom-style>
@@ -46,50 +42,17 @@
   </head>
   <body>
     <div class="vertical-section-container centered">
-      <h3>Basic id-form demo</h3>
+      <h3>Basic id-datepicker demo</h3>
       <demo-snippet>
        
         <template>
            <dom-bind>
              <template>
-              
-              <id-form data="{{formData}}" constraints="{{constraints}}">
-                <dom-if>
-                  <template>
-                    <id-alert context="success">Login successful!</id-alert>
-                  </template>
-                </dom-if>
-                <id-input bind-value="{{formData.email}}" class="md" label="Email" type="email" required></id-input>
-                <id-input bind-value="{{formData.password}}" class="md" label="Password" required type="password"></id-input>
-                <id-button class="btn-lg" on-button-click="login" indent block>Login</id-button>
-              </id-form>
-              
+              <id-datepicker bind-value="{{date}}" class="md" range label="Start Date" id="datePickerRange"></id-datepicker>
+            
               <script>
                 let demo = document.querySelector('dom-bind');
-                let conditional = document.querySelector('dom-if');
-
-                conditional.if = false;
-                
-                demo.formData = {
-                  email: '',
-                  password: ''
-                }
-
-                demo.constraints = {
-                  email: {
-                    presence: true,
-                    email: true
-                  },
-                  password: {
-                    presence: true
-                  }
-                }
-
-                demo.login = function() {
-                  if (document.querySelector('id-form').validate(false)) {
-                    conditional.if = true;
-                  }
-                }
+                demo.date = { start: new Date().setHours(0,0,0,0), end: '' };
               </script>
             </template>
           </dom-bind>

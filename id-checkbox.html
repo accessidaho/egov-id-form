@@ -2,11 +2,6 @@
 <link rel="import" href="id-form-styles.html">
 <link rel="import" href="./id-form-element-mixin.html">
 <link rel="import" href="../id-button/id-button.html">
-<!--
-`id-checkbox` Checkbox form field with Idaho styling.
-
-@demo demo/index.html
--->
 
 <dom-module id="id-checkbox">
   <template>
@@ -39,12 +34,21 @@
   </template>
 
   <script>
+    /**
+     * `id-checkbox`
+     * Idaho styled checkbox element.
+     *
+     * @customElement
+     * @polymer
+     * @appliesMixin IdFormElementMixin
+     * @demo demo/checkbox.html
+     */
     class IdCheckbox extends IdFormElementMixin(Polymer.Element) {
       static get is() { return 'id-checkbox'; }
       static get properties() {
         return {
           /**
-           * The value for this input.
+           * The checkbox value.
           **/
           bindValue: {
             type: Boolean,

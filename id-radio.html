@@ -2,11 +2,6 @@
 <link rel="import" href="id-form-styles.html">
 <link rel="import" href="./id-form-element-mixin.html">
 <link rel="import" href="../id-button/id-button.html">
-<!--
-`id-radio` allows user to select at most one radio button from a set. Checking one radio button that belongs to a radio group unchecks any previously checked radio button within the same group.
-
-@demo demo/index.html
--->
 
 <dom-module id="id-radio">
   <template>
@@ -47,10 +42,22 @@
   </template>
 
   <script>
+    /**
+     * `id-radio`
+     * Idaho styled radio element.
+     *
+     * @customElement
+     * @polymer
+     * @appliesMixin IdFormElementMixin
+     * @demo demo/radio.html
+     */
     class IdRadio extends IdFormElementMixin(Polymer.Element) {
       static get is() { return 'id-radio'; }
       static get properties() {
         return {
+          /**
+           * Array of choices to populate radios with.
+           */
           choices: Array
         };
       }

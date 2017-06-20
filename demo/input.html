@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>id-input demo</title>
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
+    <link rel="import" href="../id-form.html">
+    <link rel="import" href="../id-input.html">
+    <link href="../bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,400i,700,700i|Lato:400,700,400italic" rel="stylesheet" type="text/css">
+    <script src="../../jquery/dist/jquery.min.js"></script>
+
+
+    <custom-style>
+      <style is="custom-style" include="demo-pages-shared-styles">
+        @-ms-viewport {
+          width: device-width;
+        }
+
+        html {
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          -ms-overflow-style: scrollbar;
+        }
+
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+          font-size: 0.9rem;
+          font-weight: normal;
+          line-height: 1.5;
+          color: #292b2c;
+          margin: 0;
+        }
+      </style>
+    </custom-style>
+  </head>
+  <body>
+    <div class="vertical-section-container centered">
+      <h3>Basic id-input demo</h3>
+      <demo-snippet>
+       
+        <template>
+          <id-input bind-value="Value" class="md" label="Input"></id-input>
+        </template>
+      </demo-snippet>
+    </div>
+  </body>
+</html>

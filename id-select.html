@@ -2,11 +2,6 @@
 <link rel="import" href="id-form-styles.html">
 <link rel="import" href="./id-form-element-mixin.html">
 <link rel="import" href="../id-button/id-button.html">
-<!--
-`id-select` Select form field with Idaho styling.
-
-@demo demo/index.html
--->
 
 <dom-module id="id-select">
   <template>
@@ -70,12 +65,21 @@
   </template>
 
   <script>
+    /**
+     * `id-select`
+     * Idaho styled select element.
+     *
+     * @customElement
+     * @polymer
+     * @appliesMixin IdFormElementMixin
+     * @demo demo/select.html
+     */
     class IdSelect extends IdFormElementMixin(Polymer.Element) {
       static get is() { return 'id-select'; }
       static get properties() {
         return {
           /**
-           * List of possible values for the radios.
+           * This can be either an array of strings or a key value pair of {label, value}
           **/
           choices: {
             type: Array,
@@ -86,8 +90,7 @@
            * Default placeholder text.
           **/
           defaultOption: {
-            type: String,
-            value: 'Please select an option.'
+            type: String
           }
         };
       }
@@ -98,33 +101,41 @@
         }
 
         if (this.choices) {
-          let selectedIndex = this.choices.findIndex(item => (item && !(item instanceof String)) ? item.value === this.bindValue : item === this.bindValue);
+          let selectedIndex = this.choices.findIndex(item => (item && item.value) ? item.value === this.bindValue : item === this.bindValue);
           this.$.select.selectedIndex = selectedIndex;
         }
-
-
-      }
-
-      __optionValue(item) {
-        return (item && !(item instanceof String)) ? item.value : item;
-      }
-
-      __optionLabel(item) {
-        return (item && !(item instanceof String)) ? item.label : item;
       }
 
       /**
-       * Determines if the radio is selected.
+       * Checks if the choice is a string or object.
+       * @param  {string} item      Value of item to check.
+       * @return string             The value.
+       */
+      __optionValue(item) {
+        return (item && item.value) ? item.value : item;
+      }
+
+      /**
+       * Checks if the choice is a string or object.
+       * @param  {string} item      Value of item to check.
+       * @return string             The label.
+       */
+      __optionLabel(item) {
+        return (item && item.label) ? item.label : item;
+      }
+
+      /**
+       * Determines if the option is selected.
        * @param  {string} item      Value of item to check.
        * @param  {string} bindValue Value of bindValue variable.
        * @return boolean            Is selected.
        */
       __selected(item, bindValue) {
-        return (item && !(item instanceof String)) ? item.value === bindValue : item === bindValue;
+        return (item && item.value) ? item.value === bindValue : item === bindValue;
       }
 
       /**
-       * On change event for when a radio is selected
+       * On change event for when an option is selected
        * @param  {object} e      Event detail
        * @param  {detail} detail Detail for event
        * @param  {object} sender Node that sent the event
@@ -147,6 +158,14 @@
         while (this.$.select.firstChild) {
           this.$.select.removeChild(this.$.select.firstChild);
         }
+
+        if (this.defaultOption) {
+          let defaultOption = document.createElement('option');
+          defaultOption.setAttribute('value', '');
+          defaultOption.innerHTML = this.__optionLabel(this.defaultOption);
+          this.$.select.appendChild(defaultOption);
+        }
+        
 
         this.choices.forEach((choice) => {
           let option = document.createElement('option');

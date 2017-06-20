@@ -1,9 +1,13 @@
 <script>
+  /**
+   * @mixinFunction
+   * @polymer
+   */
   const IdFormElementMixin = superclass => class extends superclass {
     static get properties() {
       return {
         /**
-         * The value for this input.
+         * The value for this element.
         **/
         bindValue: {
           type: String,
@@ -15,7 +19,7 @@
         **/
         label: String,
         /**
-         * The name for this input.
+         * The name of this element.
         **/
         name: String,
         /**
@@ -27,7 +31,7 @@
           reflectToAttribute: true
         },
         /**
-         * The requirement for this input.
+         * Set to true to mark the input as required. If disabled an (Optional) will be inserted.
         **/
         required: {
           type: Boolean,
@@ -35,7 +39,7 @@
           reflectToAttribute: true
         },
         /**
-         * Description text appearing above the input.
+         * Description text that appears above the input.
         **/
         hint: String,
         /**
@@ -62,6 +66,9 @@
       ]
     }
 
+    /**
+     * Commonly used cleave masks.
+     */
     _commonMasks(mask) {
       let _common = {
         money: {
@@ -79,6 +86,9 @@
       return _common[mask];
     }
 
+    /**
+     * Upon input change clear the invalid state.
+     */
     bindValueChanged() {
       if (this.invalid) {
         this.set('invalid', false);
